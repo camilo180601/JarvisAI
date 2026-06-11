@@ -1,0 +1,57 @@
+# Environments
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*$py.class
+# Config and Sensitive Files
+custom_tools.json
+
+# Logs
+*.log
+jarvis.log
+
+# Scratch scripts
+patch_main.py
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Env / secretos
+.env
+skills/*/.state.json
+
+# Trading bot (estado paper)
+
+# Caché de la agenda de Apple (datos personales)
+
+# Tests
+.pytest_cache/
+
+# Build / instaladores
+build/
+dist/
+release/
+*.spec.bak
+
+# WhatsApp bridge vendoreado (sesión + mensajes personales — NUNCA subir)
+integrations/whatsapp-mcp/
+
+# Datos personales del usuario (memoria/perfil/estado runtime — NUNCA subir)
+memory/USER.md
+memory/long_term.json
+
+# ── config/: WHITELIST — todo ignorado salvo plantillas y el modelo de voz ──
+# (credenciales google/tuya, cachés, estado runtime, etc. NUNCA suben)
+config/*
+!config/*.example.json
+!config/vosk_model/
+!config/accessibility_config.json

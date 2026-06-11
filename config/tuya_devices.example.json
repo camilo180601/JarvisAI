@@ -1,0 +1,11 @@
+[
+  {
+    "id": "<ID>",
+    "name": "<NAME>",
+    "key": "<KEY>",
+    "category": "<CATEGORY>",
+    "product_name": "<PRODUCT_NAME>",
+    "ip": "<IP>",
+    "version": "<VERSION>"
+  }
+]

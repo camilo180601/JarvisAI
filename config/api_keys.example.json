@@ -1,0 +1,15 @@
+{
+  "camera_index": "",
+  "mic_device": "",
+  "speaker_device": "",
+  "chrome_exe_path_windows": "",
+  "chrome_exe_path_mac": "",
+  "chrome_exe_path_linux": "",
+  "timezone": "America/Bogota",
+  "jarvis_voice": "Charon",
+  "jarvis_theme": "azul",
+  "gpu_acceleration": false,
+  "reasoning_provider": "gemini",
+  "reasoning_model": "gemini-2.5-flash",
+  "_doc": "Ajustes NO-secretos (la app los gestiona sola). Los secretos van en .env — ver .env.example."
+}

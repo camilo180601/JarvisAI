@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS Neural Core</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Sora:wght@600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-fixed: #f59e0b;
+            --primary-fixed-dim: #78350f;
+            --primary-glow: rgba(245, 158, 11, 0.3);
+            --primary-ring-1-bg: rgba(245, 158, 11, 0.2);
+            --primary-ring-2-bg: rgba(245, 158, 11, 0.15);
+            --energy-level: 1.0;
+            --glow-intensity: 0.6;
+            --bg-color: #0f0a02;
+        }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-start { align-items: flex-start; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .font-mono { font-family: 'JetBrains Mono', Consolas, Monaco, 'Courier New', monospace; }
+        .font-bold { font-weight: bold; }
+        .opacity-50 { opacity: 0.5; }
+        .text-\[8px\] { font-size: 8px; }
+        .text-sm { font-size: 12px; }
+        .text-2xl { font-size: 24px; }
+        .tracking-widest { letter-spacing: 0.15em; }
+        .mt-0\.5 { margin-top: 2px; }
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+            font-family: 'JetBrains Mono', Consolas, Monaco, 'Courier New', monospace;
+            user-select: none;
+        }
+        #neural-core-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #orb-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 48%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        #sphere-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            cursor: pointer;
+            filter: drop-shadow(0 0 25px var(--primary-glow));
+            transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .ambient-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 70%;
+            height: 70%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        #synaptic-stats {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--primary-fixed);
+            opacity: 0.8;
+            pointer-events: none;
+            text-shadow: 0 0 8px var(--primary-glow);
+        }
+        .telemetry-item {
+            display: flex;
+            flex-direction: column;
+            border-left: 2px solid var(--primary-fixed);
+            padding-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="neural-core-container">
+        <div id="orb-wrapper">
+            <canvas id="sphere-canvas"></canvas>
+            <div class="ambient-glow" id="ambient-halo"></div>
+        </div>
+        <div id="synaptic-stats" class="font-mono">
+            <div class="telemetry-item">
+                <span class="opacity-50 text-[8px] tracking-widest">Core Sync</span>
+                <span id="stat-sync" class="font-bold text-sm mt-0.5">99.2%</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="opacity-50 text-[8px] tracking-widest">Synaptic Load</span>
+                <span id="stat-load" class="font-bold text-sm mt-0.5">8 ms</span>
+            </div>
+            <div class="telemetry-item">
+                <span class="opacity-50 text-[8px] tracking-widest">Neural Mode</span>
+                <span id="stat-mode" class="font-bold text-sm mt-0.5" style="color: #ffffff;">ACTIVE</span>
+            </div>
+        </div>
+    </div>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script>
+        let pyBridge = null;
+        try {
+            new QWebChannel(qt.webChannelTransport, function (channel) {
+                pyBridge = channel.objects.pyBridge;
+                console.log("Qt WebChannel connected!");
+                if (pyBridge && pyBridge.request_theme) {
+                    pyBridge.request_theme();
+                }
+            });
+        } catch (e) {
+            console.log("Standalone mode.");
+        }
+        const canvas = document.getElementById('sphere-canvas');
+        const ctx = canvas.getContext('2d');
+        const orbWrapper = document.getElementById('orb-wrapper');
+        const halo = document.getElementById('ambient-halo');
+        let isMuted = false;
+        let baseIntensity = 1.0;
+        let width, height;
+        
+        let rotationX = 0;
+        let rotationY = 0;
+        let targetRotationX = 0;
+        let targetRotationY = 0;
+        let currentState = "LISTENING"; // LISTENING, THINKING, SPEAKING, MUTED
+        let currentVolume = 0.0;
+        let targetVolume = 0.0;
+
+        // ── Parámetros por estado + interpolación suave (sin cambios bruscos) ──
+        const STATE_PARAMS = {
+            LISTENING: { speed: 1.0,  drift: 1.2, intensity: 1.0,  rotX: 0.0008, rotY: 0.0024, hud: 0.003, conn: 3, dist: 120 },
+            THINKING:  { speed: 3.5,  drift: 2.5, intensity: 1.6,  rotX: 0.008,  rotY: 0.024,  hud: 0.025, conn: 5, dist: 150 },
+            SPEAKING:  { speed: 1.8,  drift: 1.4, intensity: 1.15, rotX: 0.002,  rotY: 0.005,  hud: 0.008, conn: 3, dist: 120 },
+            MUTED:     { speed: 0.15, drift: 0.2, intensity: 0.4,  rotX: 0.0001, rotY: 0.0004, hud: 0.001, conn: 1, dist: 80 },
+        };
+        let P = Object.assign({}, STATE_PARAMS.LISTENING);   // params vigentes (lerpeados)
+        function lerpParams() {
+            const t = STATE_PARAMS[currentState] || STATE_PARAMS.LISTENING;
+            for (const k in t) P[k] += (t[k] - P[k]) * 0.07;   // ~400ms de transición
+        }
+
+        let voiceRings = [];
+        let listenRings = [];   // ondas ENTRANTES cuando el usuario habla (LISTENING)
+        let shockwaves = [];    // onda expansiva al disparar una tool (entrar a THINKING)
+        let sparks = [];        // chispas que salen despedidas de la superficie
+
+        // Partículas orbitales (electrones en órbitas elípticas inclinadas)
+        const ORBITERS = [];
+        (function initOrbiters() {
+            const orbits = [
+                { tilt: 0.45, ry: 0.0,  speed: 0.011 },
+                { tilt: -0.6, ry: 1.1,  speed: -0.008 },
+                { tilt: 0.2,  ry: 2.2,  speed: 0.014 },
+            ];
+            orbits.forEach((o, oi) => {
+                for (let k = 0; k < 3; k++) {
+                    ORBITERS.push({ ...o, phase: (Math.PI * 2 / 3) * k + oi * 0.7 });
+                }
+            });
+        })();
+
+        function drawOrbiters(cx, cy, radius, intensity) {
+            const R = radius * 1.22;
+            for (const ob of ORBITERS) {
+                ob.phase += ob.speed * P.speed;
+                // órbita en el plano XZ, inclinada (tilt) y rotada (ry)
+                let x = R * Math.cos(ob.phase), z = R * Math.sin(ob.phase), y = 0;
+                let y1 = y * Math.cos(ob.tilt) - z * Math.sin(ob.tilt);
+                let z1 = y * Math.sin(ob.tilt) + z * Math.cos(ob.tilt);
+                let x2 = x * Math.cos(ob.ry) - z1 * Math.sin(ob.ry);
+                let z2 = x * Math.sin(ob.ry) + z1 * Math.cos(ob.ry);
+                const scale = (z2 + R) / (R * 2) * 0.7 + 0.3;
+                const r = 1.6 * scale + currentVolume * 1.2;
+                const a = Math.min(1, (0.25 + scale * 0.55) * intensity);
+                const g = ctx.createRadialGradient(cx + x2, cy + y1, 0, cx + x2, cy + y1, r * 2.6);
+                g.addColorStop(0, hexToRgba('#ffffff', a));
+                g.addColorStop(0.35, hexToRgba(themeColors.PRI, a * 0.8));
+                g.addColorStop(1, 'transparent');
+                ctx.beginPath();
+                ctx.arc(cx + x2, cy + y1, r * 2.6, 0, Math.PI * 2);
+                ctx.fillStyle = g;
+                ctx.fill();
+            }
+        }
+
+        function emitSparks(cx, cy, radius, count) {
+            for (let i = 0; i < count && sparks.length < 40; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const sp = 1.2 + Math.random() * 2.2;
+                sparks.push({
+                    x: cx + Math.cos(ang) * radius * 0.95,
+                    y: cy + Math.sin(ang) * radius * 0.95,
+                    vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 0.4,
+                    life: 1.0,
+                });
+            }
+        }
+
+        function drawSparks() {
+            for (let i = sparks.length - 1; i >= 0; i--) {
+                const s = sparks[i];
+                s.x += s.vx; s.y += s.vy;
+                s.vy += 0.015;        // gravedad sutil
+                s.life -= 0.025;
+                if (s.life <= 0) { sparks.splice(i, 1); continue; }
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, 1.1 * s.life + 0.3, 0, Math.PI * 2);
+                ctx.fillStyle = hexToRgba(s.life > 0.5 ? '#ffffff' : themeColors.PRI, s.life * 0.9);
+                ctx.fill();
+            }
+        }
+
+        // Arcos SEGMENTADOS estilo arc-reactor (en vez de círculos completos)
+        function drawArcSegments(cx, cy, r, angle, segs, width, color, opacity) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(angle);
+            ctx.lineWidth = width;
+            ctx.strokeStyle = hexToRgba(color, opacity);
+            ctx.lineCap = 'round';
+            const span = (Math.PI * 2) / segs;
+            for (let i = 0; i < segs; i++) {
+                ctx.beginPath();
+                ctx.arc(0, 0, r, i * span, i * span + span * 0.62);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+        let themeColors = {
+            PRI: '#f59e0b',
+            PRI_DIM: '#78350f',
+            TEXT: '#fde68a',
+            BG: '#0f0a02'
+        };
+        const NODE_COUNT = 110;
+        let sphereRadius = 135;
+        const nodes = [];
+        let pulses = []; // Synaptic transmissions sliding along connections
+        // Mouse tracking for organic awareness
+        let mouseX = 0, mouseY = 0;
+        let targetMouseX = 0, targetMouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            targetMouseX = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+            targetMouseY = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+        });
+        // 3D organic drift using layered sine waves (acting as a fast simplex-like noise field)
+        function getNoiseOffset(x, y, z, time, seed) {
+            const s1 = Math.sin(x * 0.005 + time * 0.7 + seed) * 15;
+            const s2 = Math.cos(y * 0.006 - time * 0.5 + seed * 1.3) * 15;
+            const s3 = Math.sin(z * 0.007 + time * 0.9 + seed * 1.7) * 15;
+            return { x: s1, y: s2, z: s3 };
+        }
+        class Node {
+            constructor(index) {
+                this.index = index;
+                // Golden spiral distribution for uniform sphere layout
+                const phi = Math.acos(-1 + (2 * index) / NODE_COUNT);
+                const theta = Math.sqrt(NODE_COUNT * Math.PI) * phi;
+                this.baseTheta = theta;
+                this.basePhi = phi;
+                this.x = 0;
+                this.y = 0;
+                this.z = 0;
+                this.size = 1.0 + Math.random() * 2.0;
+                this.color = themeColors.PRI;
+                this.seed = Math.random() * 100;
+                this.pulsePhase = Math.random() * Math.PI * 2;
+                this.pulseSpeed = 0.02 + Math.random() * 0.04;
+                this.synapticFiring = 0;
+                this.randomizeColor();
+            }
+            randomizeColor() {
+                const rand = Math.random();
+                if (rand > 0.6) {
+                    this.color = themeColors.PRI;
+                } else if (rand > 0.25) {
+                    this.color = themeColors.TEXT;
+                } else {
+                    this.color = themeColors.PRI_DIM;
+                }
+            }
+            update(rx, ry, intensity, radius, time) {
+                // Velocidad/turbulencia desde los params LERPEADOS (transición suave entre estados)
+                this.pulsePhase += this.pulseSpeed * P.speed;
+                if (this.synapticFiring > 0) this.synapticFiring -= 0.03;
+                // Spherical projection
+                let x = radius * Math.sin(this.basePhi) * Math.cos(this.baseTheta);
+                let y = radius * Math.sin(this.basePhi) * Math.sin(this.baseTheta);
+                let z = radius * Math.cos(this.basePhi);
+                // Add organic fluid turbulence
+                const noise = getNoiseOffset(x, y, z, time, this.seed);
+                let driftIntensity = P.drift;
+                // La voz del USUARIO agita levemente la superficie al escuchar
+                if (currentState === "LISTENING") driftIntensity += currentVolume * 1.6;
+                x += noise.x * driftIntensity;
+                y += noise.y * driftIntensity;
+                z += noise.z * driftIntensity;
+                // Apply interactive mouse warp (lean towards mouse)
+                const warpFactor = (currentState === "MUTED") ? 0.05 : 0.25;
+                x += mouseX * radius * warpFactor * (z / radius + 1) * 0.5;
+                y += mouseY * radius * warpFactor * (z / radius + 1) * 0.5;
+                // Rotate Y
+                let x1 = x * Math.cos(ry) - z * Math.sin(ry);
+                let z1 = x * Math.sin(ry) + z * Math.cos(ry);
+                // Rotate X
+                let y2 = y * Math.cos(rx) - z1 * Math.sin(rx);
+                let z2 = y * Math.sin(rx) + z1 * Math.cos(rx);
+                this.x = x1;
+                this.y = y2;
+                this.z = z2;
+            }
+            draw(ctx, centerX, centerY, intensity) {
+                // Projection sizing & opacity
+                const scale = (this.z + sphereRadius) / (sphereRadius * 2) * 0.65 + 0.35;
+                const opacity = scale * (0.35 + Math.sin(this.pulsePhase) * 0.2) * intensity;
+                const firingBoost = this.synapticFiring * 3.5;
+                ctx.beginPath();
+                const scaleModifier = (currentState === "SPEAKING") ? (1.0 + currentVolume * 1.5) : 1.0;
+                const r = (this.size * scale * scaleModifier) + firingBoost;
+                // Radial gradient for each node to look glowing/organic (light photons)
+                const grad = ctx.createRadialGradient(centerX + this.x, centerY + this.y, 0, centerX + this.x, centerY + this.y, r * 1.5);
+                grad.addColorStop(0, hexToRgba(this.color, 1.0));
+                grad.addColorStop(0.3, hexToRgba(this.color, 0.8));
+                grad.addColorStop(1, 'transparent');
+                ctx.arc(centerX + this.x, centerY + this.y, r * 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = grad;
+                ctx.globalAlpha = Math.min(1.0, opacity + this.synapticFiring);
+                ctx.fill();
+            }
+        }
+        function init() {
+            resize();
+            nodes.length = 0;
+            for (let i = 0; i < NODE_COUNT; i++) {
+                nodes.push(new Node(i));
+            }
+            pulses.length = 0;
+        }
+        function resize() {
+            // Retina/HiDPI: el backing store va a resolución física (x devicePixelRatio)
+            // y dibujamos en píxeles CSS vía setTransform → orbe nítido, no pixelado.
+            const dpr = window.devicePixelRatio || 1;
+            width = orbWrapper.clientWidth;
+            height = orbWrapper.clientHeight;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            canvas.width = Math.round(width * dpr);
+            canvas.height = Math.round(height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            sphereRadius = Math.min(width, height) * 0.44;
+            if (sphereRadius > 140) sphereRadius = 140;
+            if (sphereRadius < 95) sphereRadius = 95;
+        }
+        window.addEventListener('resize', resize);
+        function triggerSynapticBurst() {
+            nodes.forEach(n => {
+                if (Math.random() > 0.55) n.synapticFiring = 0.95;
+            });
+            // Spawn synaptic pulses traveling along active connections
+            for (let i = 0; i < 15; i++) {
+                const start = Math.floor(Math.random() * nodes.length);
+                const targets = findNearNodes(start, 130);
+                if (targets.length > 0) {
+                    const end = targets[Math.floor(Math.random() * targets.length)];
+                    pulses.push({
+                        start: start,
+                        end: end,
+                        progress: 0,
+                        speed: 0.03 + Math.random() * 0.04
+                    });
+                }
+            }
+        }
+        function findNearNodes(nodeIdx, threshold) {
+            const results = [];
+            const n1 = nodes[nodeIdx];
+            for (let i = 0; i < nodes.length; i++) {
+                if (i === nodeIdx) continue;
+                const n2 = nodes[i];
+                const dx = n1.x - n2.x;
+                const dy = n1.y - n2.y;
+                const dz = n1.z - n2.z;
+                if (Math.sqrt(dx*dx + dy*dy + dz*dz) < threshold) {
+                    results.push(i);
+                }
+            }
+            return results;
+        }
+        let time = 0;
+        let hudAngle = 0;
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            const centerX = width / 2;
+            const centerY = height / 2;
+            time += 0.015;
+            lerpParams();   // interpola los params hacia el estado actual (transiciones suaves)
+            // Volume damping & smoothing
+            currentVolume += (targetVolume - currentVolume) * 0.25;
+            targetVolume *= 0.92;
+            if (currentVolume < 0.001) currentVolume = 0;
+            // Smooth mouse interpolations
+            mouseX += (targetMouseX - mouseX) * 0.08;
+            mouseY += (targetMouseY - mouseY) * 0.08;
+            // Rotación desde los params lerpeados + empuje extra por volumen al hablar
+            let rotSpeedX = P.rotX, rotSpeedY = P.rotY;
+            if (currentState === "SPEAKING") {
+                rotSpeedX += currentVolume * 0.015;
+                rotSpeedY += currentVolume * 0.035;
+            }
+            targetRotationX += rotSpeedX;
+            targetRotationY += rotSpeedY;
+            // Rotate sphere container slightly based on mouse
+            rotationX = targetRotationX + mouseY * 0.35;
+            rotationY = targetRotationY + mouseX * 0.35;
+            // Pulsing scale for entire canvas
+            let canvasScale = 1.0;
+            if (currentState === "SPEAKING") {
+                canvasScale = 1.0 + currentVolume * 0.18;
+            } else if (currentState === "THINKING") {
+                canvasScale = 1.02 + Math.sin(time * 3.0) * 0.015;
+            } else {
+                canvasScale = 1.0 + Math.sin(time * 0.8) * 0.01; // Ethereal slow breathing
+            }
+            canvas.style.transform = `scale(${canvasScale})`;
+            // Interactive ambient halo sizing
+            if (halo) {
+                const haloScale = 1.0 + (currentState === "SPEAKING" ? currentVolume * 0.45 : Math.sin(time * 0.8) * 0.05);
+                halo.style.transform = `translate(-50%, -50%) scale(${haloScale})`;
+                if (currentState === "MUTED") {
+                    halo.style.background = `radial-gradient(circle, rgba(255, 51, 85, 0.08) 0%, transparent 70%)`;
+                } else if (currentState === "THINKING") {
+                    halo.style.background = `radial-gradient(circle, ${hexToRgba(themeColors.PRI, 0.18)} 0%, transparent 70%)`;
+                } else {
+                    halo.style.background = `radial-gradient(circle, ${hexToRgba(themeColors.PRI, 0.12 + currentVolume * 0.2)} 0%, transparent 70%)`;
+                }
+            }
+            // Intensidad lerpeada + reactividad al volumen (al hablar JARVIS o al escucharTE)
+            let intensity = P.intensity;
+            if (currentState === "SPEAKING") intensity += currentVolume * 0.7;
+            else if (currentState === "LISTENING") intensity += currentVolume * 0.45;
+            // Update sphere breathing radius
+            let currentRadius = sphereRadius;
+            if (currentState === "SPEAKING") {
+                currentRadius = sphereRadius * (1.0 + currentVolume * 0.22);
+            } else if (currentState === "THINKING") {
+                currentRadius = sphereRadius * (0.95 + Math.sin(time * 3.5) * 0.04);
+            } else {
+                currentRadius = sphereRadius * (1.0 + Math.sin(time * 0.8) * 0.03); // Breathing size
+            }
+            // HUD: arcos SEGMENTADOS contra-rotando (estilo arc reactor) + un anillo punteado fino
+            hudAngle += P.hud + (currentState === "SPEAKING" ? currentVolume * 0.02 : 0);
+            drawArcSegments(centerX, centerY, currentRadius * 1.30, hudAngle, 3, 1.6, themeColors.PRI, 0.22 + currentVolume * 0.25);
+            drawArcSegments(centerX, centerY, currentRadius * 1.38, -hudAngle * 0.7, 5, 0.9, themeColors.PRI_DIM, 0.18);
+            drawHudRing(ctx, centerX, centerY, currentRadius * 0.85, hudAngle * 0.4, [1, 25], 0.6, themeColors.PRI, 0.08);
+            // Draw beautiful fluid central star core (energy reactor field)
+            if (currentState !== "MUTED") {
+                ctx.save();
+                ctx.globalCompositeOperation = "screen";
+                const gradCore = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, currentRadius * 0.8);
+                const coreOpacity = 0.22 + (currentState === "SPEAKING" ? currentVolume * 0.4 : (currentState === "THINKING" ? 0.15 : 0.05));
+                gradCore.addColorStop(0, hexToRgba(themeColors.PRI, coreOpacity));
+                gradCore.addColorStop(0.3, hexToRgba(themeColors.PRI, coreOpacity * 0.6));
+                gradCore.addColorStop(0.7, hexToRgba(themeColors.PRI_DIM, coreOpacity * 0.2));
+                gradCore.addColorStop(1, 'transparent');
+                
+                ctx.fillStyle = gradCore;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, currentRadius * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+                // Núcleo "white-hot": punto interno incandescente que respira y reacciona a la voz
+                const hotR = currentRadius * (0.16 + Math.sin(time * 1.6) * 0.015 + currentVolume * 0.10);
+                const hotA = 0.10 + coreOpacity * 0.5 + currentVolume * 0.25;
+                const gradHot = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, hotR);
+                gradHot.addColorStop(0, hexToRgba('#ffffff', Math.min(0.85, hotA)));
+                gradHot.addColorStop(0.35, hexToRgba(themeColors.TEXT, hotA * 0.6));
+                gradHot.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradHot;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, hotR, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+            // Voice rings al hablar: POCAS ondas y bien espaciadas (máx 3 vivas; la
+            // nueva nace solo cuando la anterior ya se alejó). Antes la condición de
+            // espaciado estaba rota → un anillo POR FRAME = pila de círculos pegados.
+            if (currentState === "SPEAKING" && !isMuted && currentVolume > 0.18) {
+                const lastVR = voiceRings[voiceRings.length - 1];
+                const spawnR = currentRadius * 0.55;
+                if (voiceRings.length < 3 && (!lastVR || lastVR.r > spawnR + 70)) {
+                    voiceRings.push({ r: spawnR, a: 0.30 + currentVolume * 0.25 });
+                }
+            }
+            // Ondas ENTRANTES cuando el usuario habla (LISTENING): pocas y espaciadas
+            if (currentState === "LISTENING" && !isMuted && currentVolume > 0.12) {
+                const lastLR = listenRings[listenRings.length - 1];
+                const spawnL = currentRadius * 1.55;
+                if (listenRings.length < 3 && (!lastLR || lastLR.r < spawnL - 60)) {
+                    listenRings.push({ r: spawnL, a: 0.05 + currentVolume * 0.35 });
+                }
+            }
+            for (let r = listenRings.length - 1; r >= 0; r--) {
+                const lr = listenRings[r];
+                lr.r -= 2.2 + currentVolume * 2.5;       // viaja hacia ADENTRO
+                lr.a *= 0.965;
+                if (lr.a < 0.01 || lr.r < currentRadius * 0.3) {
+                    listenRings.splice(r, 1);
+                    continue;
+                }
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, lr.r, 0, Math.PI * 2);
+                ctx.lineWidth = 0.8 + currentVolume;
+                ctx.strokeStyle = hexToRgba(themeColors.TEXT, lr.a);
+                ctx.stroke();
+            }
+            // Shockwave al disparar una tool (entrada a THINKING): un anillo expansivo nítido
+            for (let s = shockwaves.length - 1; s >= 0; s--) {
+                const sw = shockwaves[s];
+                sw.r += 5.5;
+                sw.a *= 0.93;
+                if (sw.a < 0.012) { shockwaves.splice(s, 1); continue; }
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, sw.r, 0, Math.PI * 2);
+                ctx.lineWidth = 2.2 * sw.a * 8;
+                ctx.strokeStyle = hexToRgba(themeColors.PRI, sw.a);
+                ctx.stroke();
+            }
+            for (let r = voiceRings.length - 1; r >= 0; r--) {
+                const vr = voiceRings[r];
+                vr.r += 2.8 + currentVolume * 3.0;
+                vr.a *= 0.93;
+                if (vr.a < 0.015 || vr.r > Math.max(width, height) * 0.6) {
+                    voiceRings.splice(r, 1);
+                    continue;
+                }
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, vr.r, 0, Math.PI * 2);
+                ctx.lineWidth = 1.2 + currentVolume;
+                ctx.strokeStyle = hexToRgba(themeColors.PRI, vr.a);
+                ctx.stroke();
+            }
+            // Update node calculations
+            nodes.forEach(node => node.update(rotationX, rotationY, intensity, currentRadius, time));
+            // Dynamic neural connections & synapses drawing (lerpeado)
+            const connLimit = Math.round(P.conn);
+            let distThreshold = P.dist + (currentState === "SPEAKING" ? currentVolume * 50 : 0);
+            for (let i = 0; i < nodes.length; i++) {
+                let connCount = 0;
+                for (let j = i + 1; j < nodes.length; j++) {
+                    if (connCount >= connLimit) break;
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const dz = nodes[i].z - nodes[j].z;
+                    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                    if (dist < distThreshold) {
+                        connCount++;
+                        const zScale = ((nodes[i].z + nodes[j].z) / 2 + currentRadius) / (currentRadius * 2);
+                        const opacity = (1 - dist / distThreshold) * 0.35 * zScale * intensity;
+                        ctx.beginPath();
+                        ctx.lineWidth = 0.4 + zScale * 1.2;
+                        ctx.moveTo(centerX + nodes[i].x, centerY + nodes[i].y);
+                        ctx.lineTo(centerX + nodes[j].x, centerY + nodes[j].y);
+                        const gradLine = ctx.createLinearGradient(
+                            centerX + nodes[i].x, centerY + nodes[i].y,
+                            centerX + nodes[j].x, centerY + nodes[j].y
+                        );
+                        gradLine.addColorStop(0, hexToRgba(nodes[i].color, opacity));
+                        gradLine.addColorStop(1, hexToRgba(nodes[j].color, opacity));
+                        ctx.strokeStyle = gradLine;
+                        ctx.stroke();
+                        // Occasional high frequency synaptic flicker
+                        if (currentState !== "MUTED" && Math.random() > (currentState === "THINKING" ? 0.94 : 0.993)) {
+                            ctx.save();
+                            ctx.lineWidth = (0.4 + zScale * 1.2) * 2.5;
+                            ctx.strokeStyle = hexToRgba(themeColors.TEXT, opacity * 2.2);
+                            ctx.stroke();
+                            ctx.restore();
+                            nodes[i].synapticFiring = 0.65;
+                        }
+                    }
+                }
+            }
+            // Update and draw floating synaptic transmission packets (pulses)
+            for (let p = pulses.length - 1; p >= 0; p--) {
+                const pulse = pulses[p];
+                pulse.progress += pulse.speed;
+                if (pulse.progress >= 1.0) {
+                    // Activate target node firing visual
+                    if (nodes[pulse.end]) nodes[pulse.end].synapticFiring = 0.8;
+                    pulses.splice(p, 1);
+                    continue;
+                }
+                const nStart = nodes[pulse.start];
+                const nEnd = nodes[pulse.end];
+                if (nStart && nEnd) {
+                    // Quadratic interpolation curve for 3D curved packet trajectory (arcs)
+                    const px = nStart.x + (nEnd.x - nStart.x) * pulse.progress;
+                    const py = nStart.y + (nEnd.y - nStart.y) * pulse.progress;
+                    const pz = nStart.z + (nEnd.z - nStart.z) * pulse.progress;
+                    
+                    const scale = (pz + currentRadius) / (currentRadius * 2) * 0.65 + 0.35;
+                    const pulseRadius = 2.5 * scale;
+                    
+                    const pulseGrad = ctx.createRadialGradient(centerX + px, centerY + py, 0, centerX + px, centerY + py, pulseRadius * 2.0);
+                    pulseGrad.addColorStop(0, '#ffffff');
+                    pulseGrad.addColorStop(0.3, hexToRgba(themeColors.PRI, 0.9));
+                    pulseGrad.addColorStop(1, 'transparent');
+                    ctx.beginPath();
+                    ctx.arc(centerX + px, centerY + py, pulseRadius * 2.0, 0, Math.PI * 2);
+                    ctx.fillStyle = pulseGrad;
+                    ctx.globalAlpha = scale * intensity;
+                    ctx.fill();
+                }
+            }
+            ctx.globalAlpha = 1.0;
+            // Sort nodes by depth (painter's algorithm for accurate 3D layering)
+            nodes.sort((a, b) => a.z - b.z);
+            nodes.forEach(node => node.draw(ctx, centerX, centerY, intensity));
+            // Electrones orbitales + chispas (encima de los nodos)
+            ctx.globalAlpha = 1.0;
+            if (currentState !== "MUTED") drawOrbiters(centerX, centerY, currentRadius, intensity);
+            if (currentState === "SPEAKING" && currentVolume > 0.3 && Math.random() < currentVolume * 0.5) {
+                emitSparks(centerX, centerY, currentRadius, 2);
+            }
+            drawSparks();
+            // Telemetry values update
+            const statSync = document.getElementById('stat-sync');
+            const statLoad = document.getElementById('stat-load');
+            const statMode = document.getElementById('stat-mode');
+            if (statSync && statLoad && statMode) {
+                if (currentState === "THINKING") {
+                    statSync.textContent = (99.5 + Math.random() * 0.4).toFixed(1) + '%';
+                    statLoad.textContent = Math.floor(1 + Math.random() * 3) + ' ms';
+                    statMode.textContent = "THINKING";
+                    statMode.style.color = themeColors.TEXT;
+                } else if (currentState === "MUTED") {
+                    statSync.textContent = "0.0%";
+                    statLoad.textContent = "0 ms";
+                    statMode.textContent = "MUTED";
+                    statMode.style.color = "#ff3355";
+                } else if (currentState === "SPEAKING") {
+                    statSync.textContent = (99.0 + Math.random() * 0.8).toFixed(1) + '%';
+                    statLoad.textContent = Math.floor(4 + Math.random() * 5) + ' ms';
+                    statMode.textContent = "SPEAKING";
+                    statMode.style.color = themeColors.PRI;
+                } else {
+                    statSync.textContent = (98.7 + Math.random() * 0.9).toFixed(1) + '%';
+                    statLoad.textContent = Math.floor(5 + Math.random() * 6) + ' ms';
+                    statMode.textContent = "ACTIVE";
+                    statMode.style.color = "#ffffff";
+                }
+            }
+            // Periodic synaptic fires in background
+            const triggerChance = (currentState === "THINKING") ? 0.08 : ((currentState === "SPEAKING") ? 0.03 : 0.005);
+            if (Math.random() < triggerChance) {
+                triggerSynapticBurst();
+            }
+            requestAnimationFrame(animate);
+        }
+        // Draw futuristic detailed HUD circles
+        function drawHudRing(ctx, cx, cy, r, angle, dash, width, color, opacity) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.lineWidth = width;
+            ctx.strokeStyle = hexToRgba(color, opacity);
+            ctx.setLineDash(dash);
+            
+            // Rotate ring context
+            ctx.translate(cx, cy);
+            ctx.rotate(angle);
+            ctx.translate(-cx, -cy);
+            
+            ctx.stroke();
+            ctx.restore();
+        }
+        window.updateState = function(state) {
+            const prev = currentState;
+            currentState = state;
+            // Feedback visual al disparar una tool: burst sináptico + onda expansiva
+            if (state === "THINKING" && prev !== "THINKING") {
+                triggerSynapticBurst();
+                shockwaves.push({ r: sphereRadius * 0.45, a: 0.5 });
+                emitSparks(width / 2, height / 2, sphereRadius, 10);
+            }
+            console.log("State updated: " + state);
+            const statMode = document.getElementById('stat-mode');
+            if (state === "MUTED") {
+                isMuted = true;
+                baseIntensity = 0.5;
+                if (statMode) {
+                    statMode.textContent = "MUTED";
+                    statMode.style.color = "#ff3355";
+                }
+            } else {
+                isMuted = false;
+                baseIntensity = 1.0;
+                if (state === "SPEAKING") {
+                    baseIntensity = 1.25;
+                }
+                if (statMode) {
+                    statMode.textContent = (state === "SPEAKING") ? "SPEAKING" : "ACTIVE";
+                    statMode.style.color = themeColors.PRI;
+                }
+            }
+        };
+        window.updateVolume = function(level) {
+            targetVolume = Math.max(0, Math.min(1.0, level));
+        };
+        window.setThemeColors = function(colors) {
+            themeColors = {
+                PRI: colors.PRI || '#f59e0b',
+                PRI_DIM: colors.PRI_DIM || '#78350f',
+                TEXT: colors.TEXT || '#fde68a',
+                BG: colors.BG || '#0f0a02'
+            };
+            document.documentElement.style.setProperty('--primary-fixed', themeColors.PRI);
+            document.documentElement.style.setProperty('--primary-fixed-dim', themeColors.PRI_DIM);
+            document.documentElement.style.setProperty('--primary-glow', hexToRgba(themeColors.PRI, 0.35));
+            document.documentElement.style.setProperty('--primary-ring-1-bg', hexToRgba(themeColors.PRI, 0.18));
+            document.documentElement.style.setProperty('--primary-ring-2-bg', hexToRgba(themeColors.PRI, 0.12));
+            document.documentElement.style.setProperty('--bg-color', themeColors.BG);
+            const statsPanel = document.getElementById('synaptic-stats');
+            if (statsPanel) statsPanel.style.color = themeColors.PRI;
+            nodes.forEach(node => node.randomizeColor());
+        };
+        function hexToRgba(hex, alpha) {
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c = hex.substring(1).split('');
+                if(c.length == 3){
+                    c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c = '0x' + c.join('');
+                return `rgba(${[(c>>16)&255, (c>>8)&255, c&255].join(',')},${alpha})`;
+            }
+            return hex;
+        }
+        init();
+        animate();
+    </script>
+</body>
+</html>

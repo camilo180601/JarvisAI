@@ -1,0 +1,2934 @@
+{
+  "adobe_control": {
+    "description": "Controla Adobe Illustrator, InDesign y Photoshop con plantillas curadas. Acciones generales: run (NL→ExtendScript) | preview | script | status. Documentos (cualquier app, requiere app): open | save | close | info. Imagen/vector: place_trace (AI: imagen+Calco) | export (PNG/SVG/PDF) | recolor (AI) | text_logo (AI). Illustrator: shape (crear forma) | outline_text | fit_artboard | export_artboards | align | grid | pathfinder. InDesign: new_doc | place (texto/imagen) | page_numbers | find_replace | data_merge. Photoshop: new_doc | resize | crop | adjust | text_layer | flatten | export_layers | remove_bg | batch. La app se infiere por la acción cuando es inequívoca (shape→illustrator, place→indesign, resize→photoshop); para open/save/close/info/new_doc pasá 'app'.",
+    "name": "adobe_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "run | preview | script | status | open | save | close | info | place_trace | export | recolor | text_logo | shape | outline_text | fit_artboard | export_artboards | align | grid | pathfinder | pattern (Illustrator: patrón de figuras trazadas) | radial_repeat/mandala (copias en círculo) | scatter (esparcir copias) | shape_of/polygon_of (armar un polígono —pentágono, etc.— hecho de una imagen 'query' o figuras) | tile (teselar la selección en grilla, skip_every deja vacíos) | gradient (relleno degradado a la selección, colors + type linear/radial + angle) | stroke (poner/quitar contorno a la selección: color + width, none=true quita) | opacity (opacidad 0-100 de la selección) | blend (transición entre 2 objetos, steps) | reflect/mirror (espejar, axis) | transform (rotate/scale por valor) | arrange (orden z: front/back/forward/backward) | distribute (espaciado parejo) | canvas (Photoshop: trim/resize lienzo) | rotate_canvas (Photoshop) | fill (Photoshop: rellenar de color) | layer_style (Photoshop: drop_shadow/stroke/glow) | place_image (Photoshop: colocar imagen, image o query) | new_doc. pathfinder ahora también: divide, trim, merge, crop, outline, exclude. | star (Illustrator: estrella de N puntas, points/outer/inner/fill) | spiral (Illustrator: espiral, turns/radius) | clip_mask (Illustrator: máscara de recorte con la selección) | round_rect (Illustrator: rectángulo redondeado, width/height/radius/fill) | text (Illustrator: texto en x/y con size/fill) | group/ungroup (Illustrator: agrupar/desagrupar la selección) | swatches (Illustrator: agregar muestras de color desde 'colors') | artboard (Illustrator: nueva mesa de trabajo, width/height) | compound_path (Illustrator: trazado compuesto con la selección → formas con huecos) | place_linked (Illustrator: colocar imagen sin vectorizar, image o query, embed opcional) | line (Illustrator: línea x1,y1→x2,y2 con color/width) | dashed_stroke (Illustrator: contorno discontinuo en la selección, dashes ej [6,3]) | layer (Illustrator: crear capa 'name', o renombrar la activa con rename=true) | curves (Photoshop: curvas, points=[[in,out],...]; default curva en S) | smart_object (Photoshop: convertir la capa en objeto inteligente) | photo_filter (Photoshop: filtro de foto warm/cool/hex + density) | polygon (InDesign: polígono/estrella de color, sides + star_inset%) | drop_shadow (InDesign: sombra a la selección o último rectángulo) | image_grid (InDesign: grilla/contact sheet desde 'folder', cols) | wave (Illustrator: onda senoidal, cycles/amplitude/width) | color_mode (Illustrator: convertir doc a rgb|cmyk, 'mode') | join (Illustrator: unir trazados abiertos seleccionados) | auto_tone (Photoshop: auto niveles|contraste, 'mode') | layer_mask (Photoshop: agregar máscara, reveal=true blanco/false negro) | black_white (Photoshop: B&N con 'tint' opcional) | line (línea — app-aware: Illustrator x1,y1→x2,y2; InDesign línea gráfica) | gradient (degradado — app-aware: Illustrator a la selección con colors; InDesign con colors[0..1] o color_a/color_b + type) | add_pages (InDesign: agregar 'count' páginas) | concentric (Illustrator: anillos concéntricos, rings) | sunburst (Illustrator: ráfaga de líneas radiales, count) | arc (Illustrator: arco, start_angle/sweep/radius) | lens_flare (Photoshop: destello de lente, brightness) | distort (Photoshop: twirl|spherize|pinch|ripple + amount) | unsharp (Photoshop: enfoque, amount/radius/threshold) | guides (InDesign: guías de regla, horizontals/verticals en mm) | outline_text (texto→curvas — app-aware: Illustrator o InDesign) | fit (InDesign: content_to_frame|frame_to_content|proportional|fill|center) | detect_faces (Illustrator: detecta las CARAS de un troquel/dieline importado —rectángulos cerrados— y las nombra por posición y rol con IA: frente/tapa/lateral; úsalo ANTES de colocar arte por cara) | place_in_face (Illustrator: coloca una imagen —'image' o 'query'— DENTRO de una cara detectada, indicada en 'face' por número/posición/rol; opcional trace=true para calcar) | area_text (Illustrator: caja de texto, text/width/height/size) | font (tipografía — app-aware: font/size/tracking/leading sobre texto seleccionado o capa activa) | text_align (alineación de párrafo — app-aware: left|center|right|justify, en 'align') | text_styled (Photoshop: capa de texto completa — text/size/fill/font/align/box) | warp_text (Photoshop: deformar texto, style=arc|flag|wave|fish|rise|bulge|arch + bend -1..1) | paragraph_style (InDesign: crear+aplicar estilo de párrafo, name/font/size/leading/align/color) | text_columns (InDesign: columnas en el marco, count + gutter) | bullets (InDesign: viñetas/numeración, mode=bullet|number|none) | select (Photoshop: selección all|none|invert|rect|ellipse, box=[l,t,r,b], feather) | select_color (Photoshop: rango de color, color + tolerance) | content_aware_fill (Photoshop: rellena la selección según contenido) | feather_selection (Photoshop: suaviza la selección, radius) | crop_to_selection (Photoshop: recorta al área seleccionada) | adjustment_layer (Photoshop: capa de ajuste no destructiva, kind=brightness|vibrance|blackwhite|levels, value/value2) | gradient_map (Photoshop: mapa de degradado entre 2 colores) | master_page (InDesign: crear página maestra 'name') | apply_master (InDesign: aplicar maestra, master_name + page_index -1=todas) | text_wrap (InDesign: ceñir texto bounding|object|jump|none + offset) | object_style (InDesign: crear+aplicar estilo de objeto, name/fill/stroke/stroke_weight) | place_text_file (InDesign: colocar .txt/.rtf/.docx desde 'path') | thread_frames (InDesign: hilar marcos de la página) | id_layer (InDesign: crear capa 'name' con 'color') | toc (InDesign: tabla de contenido desde 'style') | blend_mode (modo de fusión de la selección/capa — app-aware: Illustrator usa la selección, Photoshop la capa; 'mode') | layer_opacity (Photoshop: opacidad de la capa, 'value') | duplicate_layer (Photoshop) | new_layer (Photoshop: capa vacía, 'name') | hue_saturation (Photoshop: ajustar hue/saturation/lightness de la capa) | rasterize (Photoshop: rasterizar la capa activa) | transform_layer (Photoshop: rotate/scale/dx/dy de la capa) | levels (Photoshop: niveles, black/white/gamma) | color_balance (Photoshop: balance por shadows/midtones/highlights, cada uno [c-r,m-g,y-b]) | clipping_mask (Photoshop: recorta la capa activa con la de abajo) | flip (Photoshop: voltear target=layer|canvas, axis=horizontal|vertical) | text_frame (InDesign: marco de texto, text/x/y/width/height/size) | table (InDesign: tabla rows×cols) | rectangle (InDesign: rectángulo de color, x/y/width/height/fill) | corner_options (InDesign: esquinas rounded/beveled/inverse/inset/fancy + radius, a la selección o último rectángulo) | oval (InDesign: elipse de color, x/y/width/height/fill) | place | page_numbers | find_replace | step_repeat (InDesign: grilla de copias) | data_merge | resize | crop | adjust | filter (Photoshop: blur/motion/sharpen/noise/pixelate) | text_layer | flatten | export_layers | remove_bg | batch",
+          "type": "STRING"
+        },
+        "ai_label": {
+          "description": "detect_faces: true (default) = nombrar las caras con IA (frente/tapa/lateral); false = solo posición",
+          "type": "BOOLEAN"
+        },
+        "align": {
+          "description": "text_align/font/text_styled/paragraph_style: left | center | right | justify",
+          "type": "STRING"
+        },
+        "amount": {
+          "description": "filter: intensidad (radio/cantidad)",
+          "type": "NUMBER"
+        },
+        "amplitude": {
+          "description": "wave: altura de la onda (pt)",
+          "type": "NUMBER"
+        },
+        "angle": {
+          "description": "filter motion: ángulo del desenfoque",
+          "type": "NUMBER"
+        },
+        "app": {
+          "description": "illustrator | photoshop | indesign",
+          "type": "STRING"
+        },
+        "around": {
+          "description": "radial_repeat: artboard (centro de la mesa) | selection",
+          "type": "STRING"
+        },
+        "axis": {
+          "description": "reflect: horizontal | vertical; distribute: dirección",
+          "type": "STRING"
+        },
+        "bend": {
+          "description": "warp_text: curvatura -1..1",
+          "type": "NUMBER"
+        },
+        "black": {
+          "description": "levels: punto negro de entrada (0-253)",
+          "type": "INTEGER"
+        },
+        "box": {
+          "description": "text_styled: true = texto de párrafo (caja box_w x box_h)",
+          "type": "BOOLEAN"
+        },
+        "brightness": {
+          "description": "lens_flare: intensidad (10-300)",
+          "type": "NUMBER"
+        },
+        "color_a": {
+          "description": "gradient (InDesign): color inicial hex",
+          "type": "STRING"
+        },
+        "color_b": {
+          "description": "gradient (InDesign): color final hex",
+          "type": "STRING"
+        },
+        "colors": {
+          "description": "recolor: paleta de colores hex, ej ['#1e90ff','#ffffff']. Se aplican cíclicamente a las formas.",
+          "items": {
+            "type": "STRING"
+          },
+          "type": "ARRAY"
+        },
+        "cols": {
+          "description": "pattern/step_repeat: columnas",
+          "type": "INTEGER"
+        },
+        "columns": {
+          "description": "new_doc (InDesign): columnas",
+          "type": "INTEGER"
+        },
+        "count": {
+          "description": "add_pages: cuántas páginas agregar",
+          "type": "INTEGER"
+        },
+        "csv": {
+          "description": "data_merge: ruta del CSV (primera fila = encabezados).",
+          "type": "STRING"
+        },
+        "cycles": {
+          "description": "wave: nº de ciclos de la onda",
+          "type": "NUMBER"
+        },
+        "dashes": {
+          "description": "dashed_stroke: patrón de guiones, ej [6,3] (guion 6, hueco 3)",
+          "items": {
+            "type": "NUMBER"
+          },
+          "type": "ARRAY"
+        },
+        "degrees": {
+          "description": "rotate_canvas: grados",
+          "type": "NUMBER"
+        },
+        "density": {
+          "description": "photo_filter: intensidad % (1-100)",
+          "type": "NUMBER"
+        },
+        "dest": {
+          "description": "export: ruta de salida (default ~/Desktop/jarvis_export.<fmt>).",
+          "type": "STRING"
+        },
+        "dry_run": {
+          "description": "Generar script sin ejecutar",
+          "type": "BOOLEAN"
+        },
+        "dx": {
+          "description": "transform_layer: mover X en px",
+          "type": "NUMBER"
+        },
+        "dy": {
+          "description": "transform_layer: mover Y en px",
+          "type": "NUMBER"
+        },
+        "embed": {
+          "description": "place_trace/place_linked: true = incrusta la imagen en el documento.",
+          "type": "BOOLEAN"
+        },
+        "face": {
+          "description": "place_in_face: qué cara del troquel (número '2', posición 'izquierda', o rol 'frente'/'tapa'/'lateral')",
+          "type": "STRING"
+        },
+        "feather": {
+          "description": "select: suavizado del borde (px)",
+          "type": "NUMBER"
+        },
+        "fill": {
+          "description": "text_logo: color de relleno hex (default #000000).",
+          "type": "STRING"
+        },
+        "filter": {
+          "description": "photo_filter: warm | cool | hex",
+          "type": "STRING"
+        },
+        "find": {
+          "description": "find_replace: texto a buscar",
+          "type": "STRING"
+        },
+        "folder": {
+          "description": "image_grid: carpeta con las imágenes",
+          "type": "STRING"
+        },
+        "font": {
+          "description": "text_logo: nombre PostScript de la fuente (opcional).",
+          "type": "STRING"
+        },
+        "font_size": {
+          "description": "text_logo: tamaño en pt (default 120).",
+          "type": "NUMBER"
+        },
+        "format": {
+          "description": "export: png|svg|pdf|jpg. batch: png|jpg.",
+          "type": "STRING"
+        },
+        "gamma": {
+          "description": "levels: gamma de medios tonos (0.1-9.99, 1=neutro)",
+          "type": "NUMBER"
+        },
+        "gap": {
+          "description": "grid: separación entre objetos",
+          "type": "NUMBER"
+        },
+        "gutter": {
+          "description": "text_columns: medianil entre columnas (mm)",
+          "type": "NUMBER"
+        },
+        "height": {
+          "description": "shape/new_doc/resize: alto",
+          "type": "NUMBER"
+        },
+        "highlights": {
+          "description": "color_balance: luces [c-r, m-g, y-b]",
+          "items": {
+            "type": "NUMBER"
+          },
+          "type": "ARRAY"
+        },
+        "horizontals": {
+          "description": "guides: posiciones Y de guías horizontales (mm)",
+          "items": {
+            "type": "NUMBER"
+          },
+          "type": "ARRAY"
+        },
+        "how": {
+          "description": "align: left | right | center | top | bottom | middle",
+          "type": "STRING"
+        },
+        "hue": {
+          "description": "hue_saturation: desplazamiento de tono (-180..180)",
+          "type": "NUMBER"
+        },
+        "image": {
+          "description": "place_trace: ruta local de una imagen ya descargada.",
+          "type": "STRING"
+        },
+        "in_dir": {
+          "description": "batch: carpeta de entrada con imágenes.",
+          "type": "STRING"
+        },
+        "inner": {
+          "description": "star: radio interno de la estrella",
+          "type": "NUMBER"
+        },
+        "keep_image": {
+          "description": "place_trace: true (default) = conserva la imagen y deja el calco encima; false = reemplaza por el vector.",
+          "type": "BOOLEAN"
+        },
+        "kind": {
+          "description": "shape: rectangle | ellipse | polygon | star",
+          "type": "STRING"
+        },
+        "kind_adjust": {
+          "description": "adjust: bw | brightness | contrast | blur | sharpen (alias de 'kind')",
+          "type": "STRING"
+        },
+        "layout": {
+          "description": "pattern: grid | brick | scatter",
+          "type": "STRING"
+        },
+        "leading": {
+          "description": "font/text_styled/paragraph_style: interlineado (pt); 0 = auto",
+          "type": "NUMBER"
+        },
+        "lightness": {
+          "description": "hue_saturation: luminosidad (-100..100)",
+          "type": "NUMBER"
+        },
+        "limit": {
+          "description": "data_merge: máximo de registros a maquetar.",
+          "type": "INTEGER"
+        },
+        "margin": {
+          "description": "new_doc (InDesign): margen en mm",
+          "type": "NUMBER"
+        },
+        "master_name": {
+          "description": "apply_master: nombre de la página maestra a aplicar",
+          "type": "STRING"
+        },
+        "max_radius": {
+          "description": "concentric: radio externo (0 = auto al artboard)",
+          "type": "NUMBER"
+        },
+        "max_side": {
+          "description": "batch: lado máximo en px (default 1080). Solo achica.",
+          "type": "INTEGER"
+        },
+        "midtones": {
+          "description": "color_balance: medios tonos [c-r, m-g, y-b]",
+          "items": {
+            "type": "NUMBER"
+          },
+          "type": "ARRAY"
+        },
+        "min_size": {
+          "description": "detect_faces: lado mínimo en pt para que un rectángulo cuente como cara (default 40)",
+          "type": "NUMBER"
+        },
+        "mode": {
+          "description": "canvas: trim | resize; blend_mode: multiply/screen/overlay/softlight/darken/lighten/difference/color/luminosity...",
+          "type": "STRING"
+        },
+        "name": {
+          "description": "new_layer: nombre de la capa nueva",
+          "type": "STRING"
+        },
+        "new_doc": {
+          "description": "place_trace/text_logo: true (default) = documento nuevo; false = usar el abierto.",
+          "type": "BOOLEAN"
+        },
+        "none": {
+          "description": "stroke: true = quitar el trazo",
+          "type": "BOOLEAN"
+        },
+        "offset": {
+          "description": "drop_shadow (InDesign): desplazamiento de la sombra (mm)",
+          "type": "NUMBER"
+        },
+        "op": {
+          "description": "pathfinder: unite | minus | intersect",
+          "type": "STRING"
+        },
+        "order": {
+          "description": "arrange: front | back | forward | backward",
+          "type": "STRING"
+        },
+        "out_dir": {
+          "description": "batch: carpeta de salida (default <in_dir>/jarvis_out).",
+          "type": "STRING"
+        },
+        "outer": {
+          "description": "star: radio externo de la estrella",
+          "type": "NUMBER"
+        },
+        "outline": {
+          "description": "place_trace: true = trazo b/n sin relleno; false = conserva rellenos. Si se omite se infiere del preset.",
+          "type": "BOOLEAN"
+        },
+        "page_index": {
+          "description": "apply_master: índice de página (0-based); -1 = todas",
+          "type": "INTEGER"
+        },
+        "pages": {
+          "description": "new_doc (InDesign): número de páginas",
+          "type": "INTEGER"
+        },
+        "path": {
+          "description": "open: ruta del archivo a abrir. place(imagen): ruta de la imagen.",
+          "type": "STRING"
+        },
+        "per_side": {
+          "description": "shape_of: elementos por lado del polígono",
+          "type": "INTEGER"
+        },
+        "points": {
+          "description": "curves: lista de pares [entrada, salida] 0-255",
+          "items": {
+            "items": {
+              "type": "NUMBER"
+            },
+            "type": "ARRAY"
+          },
+          "type": "ARRAY"
+        },
+        "preset": {
+          "description": "place_trace: preset de Calco. default, high_fidelity_photo, low_fidelity_photo, 3_colors, 6_colors, 16_colors, shades_of_gray, black_and_white, sketched_art, silhouettes, line_art, technical_drawing.",
+          "type": "STRING"
+        },
+        "quality": {
+          "description": "export/batch JPG: calidad 0-100 (default 80).",
+          "type": "INTEGER"
+        },
+        "query": {
+          "description": "place_trace: qué imagen buscar/descargar. Se ignora si se pasa 'image'.",
+          "type": "STRING"
+        },
+        "radius": {
+          "description": "shape_of: radio del polígono; round_rect: radio de esquinas; star/spiral: radio",
+          "type": "NUMBER"
+        },
+        "rename": {
+          "description": "layer: true = renombrar la capa activa en vez de crear una",
+          "type": "BOOLEAN"
+        },
+        "replace": {
+          "description": "find_replace: texto de reemplazo",
+          "type": "STRING"
+        },
+        "request": {
+          "description": "Para run: qué hacer en lenguaje natural",
+          "type": "STRING"
+        },
+        "resolution": {
+          "description": "new_doc (Photoshop): ppi",
+          "type": "INTEGER"
+        },
+        "reveal": {
+          "description": "layer_mask: true = máscara blanca (muestra todo), false = negra (oculta)",
+          "type": "BOOLEAN"
+        },
+        "rings": {
+          "description": "concentric: nº de anillos",
+          "type": "INTEGER"
+        },
+        "rotate": {
+          "description": "pattern/scatter: rotar las figuras al azar",
+          "type": "BOOLEAN"
+        },
+        "rows": {
+          "description": "pattern/step_repeat: filas",
+          "type": "INTEGER"
+        },
+        "saturation": {
+          "description": "hue_saturation: saturación (-100..100)",
+          "type": "NUMBER"
+        },
+        "scale": {
+          "description": "export (Illustrator png/jpg): factor de escala, ej 2 = 200%.",
+          "type": "NUMBER"
+        },
+        "script": {
+          "description": "Para action=script: código ExtendScript .jsx crudo",
+          "type": "STRING"
+        },
+        "shadows": {
+          "description": "color_balance: sombras [cian-rojo, magenta-verde, amarillo-azul] (-100..100)",
+          "items": {
+            "type": "NUMBER"
+          },
+          "type": "ARRAY"
+        },
+        "shapes": {
+          "description": "pattern: figuras a mezclar (ellipse, rect, triangle, star, hexagon)",
+          "items": {
+            "type": "STRING"
+          },
+          "type": "ARRAY"
+        },
+        "sides": {
+          "description": "shape_of/polygon: lados del polígono (5=pentágono, 6=hexágono)",
+          "type": "INTEGER"
+        },
+        "size": {
+          "description": "shape_of: tamaño de cada elemento",
+          "type": "NUMBER"
+        },
+        "skip_every": {
+          "description": "tile: deja vacía cada N posición (5 = 4 llenos y 1 vacío)",
+          "type": "INTEGER"
+        },
+        "spin": {
+          "description": "shape_of: grados que se rota el polígono entero",
+          "type": "NUMBER"
+        },
+        "star_inset": {
+          "description": "polygon (InDesign): % de inserción de puntas (>0 = estrella)",
+          "type": "NUMBER"
+        },
+        "start_angle": {
+          "description": "arc: ángulo inicial en grados",
+          "type": "NUMBER"
+        },
+        "steps": {
+          "description": "blend: nº de pasos intermedios",
+          "type": "INTEGER"
+        },
+        "stroke": {
+          "description": "text_logo: color de contorno hex (opcional).",
+          "type": "STRING"
+        },
+        "stroke_weight": {
+          "description": "object_style: grosor del contorno (pt)",
+          "type": "NUMBER"
+        },
+        "style": {
+          "description": "corner_options: rounded | beveled | inverse | inset | fancy",
+          "type": "STRING"
+        },
+        "sweep": {
+          "description": "arc: grados de barrido del arco",
+          "type": "NUMBER"
+        },
+        "target": {
+          "description": "flip: layer | canvas",
+          "type": "STRING"
+        },
+        "text": {
+          "description": "text_logo: el texto del logo.",
+          "type": "STRING"
+        },
+        "threshold": {
+          "description": "unsharp: umbral (0-255)",
+          "type": "INTEGER"
+        },
+        "tilt": {
+          "description": "shape_of/tile/pattern: inclinación en GRADOS de cada elemento/copia (ej 30)",
+          "type": "NUMBER"
+        },
+        "tint": {
+          "description": "black_white: color hex para teñir el B&N (look duotono), opcional",
+          "type": "STRING"
+        },
+        "title": {
+          "description": "toc: título de la tabla de contenido",
+          "type": "STRING"
+        },
+        "tolerance": {
+          "description": "select_color: tolerancia/fuzziness (0-200)",
+          "type": "INTEGER"
+        },
+        "trace": {
+          "description": "place_in_face: true = aplicar Image Trace al arte colocado",
+          "type": "BOOLEAN"
+        },
+        "tracking": {
+          "description": "font/text_styled: espaciado entre letras (tracking)",
+          "type": "NUMBER"
+        },
+        "turns": {
+          "description": "spiral: nº de vueltas de la espiral",
+          "type": "NUMBER"
+        },
+        "type": {
+          "description": "gradient: linear | radial",
+          "type": "STRING"
+        },
+        "use_selection": {
+          "description": "recolor: true = solo lo seleccionado; false (default) = todo el documento.",
+          "type": "BOOLEAN"
+        },
+        "value": {
+          "description": "opacity: 0-100; adjust posterize/threshold: nivel",
+          "type": "NUMBER"
+        },
+        "value2": {
+          "description": "adjustment_layer: segundo valor (ej contraste en brightness)",
+          "type": "NUMBER"
+        },
+        "vary": {
+          "description": "pattern: variar el tamaño al azar",
+          "type": "BOOLEAN"
+        },
+        "verticals": {
+          "description": "guides: posiciones X de guías verticales (mm)",
+          "items": {
+            "type": "NUMBER"
+          },
+          "type": "ARRAY"
+        },
+        "white": {
+          "description": "levels: punto blanco de entrada (2-255)",
+          "type": "INTEGER"
+        },
+        "width": {
+          "description": "stroke: grosor del trazo (pt)",
+          "type": "NUMBER"
+        },
+        "x": {
+          "description": "text_frame/table/rectangle (InDesign): X en mm; text (Illustrator): X en pt",
+          "type": "NUMBER"
+        },
+        "x1": {
+          "description": "line: X inicial (pt)",
+          "type": "NUMBER"
+        },
+        "x2": {
+          "description": "line: X final (pt)",
+          "type": "NUMBER"
+        },
+        "y": {
+          "description": "text_frame/table/rectangle (InDesign): Y en mm; text (Illustrator): Y en pt",
+          "type": "NUMBER"
+        },
+        "y1": {
+          "description": "line: Y inicial (pt)",
+          "type": "NUMBER"
+        },
+        "y2": {
+          "description": "line: Y final (pt)",
+          "type": "NUMBER"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "agent_task": {
+    "description": "Tareas multi-paso con varias tools encadenadas. NO usar para un solo comando.",
+    "name": "agent_task",
+    "parameters": {
+      "properties": {
+        "goal": {
+          "description": "Complete description of what to accomplish",
+          "type": "STRING"
+        },
+        "priority": {
+          "description": "low | normal | high (default: normal)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "goal"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "antigravity": {
+    "description": "Usa la Antigravity CLI de Google (headless, con la suscripción del usuario — sin API key, corre con Gemini 3.5 Flash) para programar o responder. USAR cuando el usuario diga 'usá Antigravity', 'que lo haga Antigravity', 'conectate a Antigravity', o pida que JARVIS 'mejore su frontend/interfaz'. action=run (edita archivos en el proyecto, NO commitea) | plan (propone sin tocar) | ask (pregunta de conocimiento) | status (verifica instalación/login) | improve_frontend (mejora ui.py y assets/sphere.html en una RAMA git nueva con preview del diff — NUNCA toca main solo; pasá 'goal' para enfocar la mejora). Nota: agy 1.0.x tiene un bug donde -p headless a veces no devuelve texto; si pasa, la tool avisa.",
+    "name": "antigravity",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "run | plan | ask | status | improve_frontend",
+          "type": "STRING"
+        },
+        "auto": {
+          "description": "true = más autónomo (salta permisos). Default false.",
+          "type": "BOOLEAN"
+        },
+        "branch": {
+          "description": "improve_frontend: nombre de rama (default: antigravity/frontend-<fecha>)",
+          "type": "STRING"
+        },
+        "goal": {
+          "description": "Tarea/objetivo (run/plan/improve_frontend). Para improve_frontend, enfoca qué mejorar del frontend.",
+          "type": "STRING"
+        },
+        "project_path": {
+          "description": "Proyecto donde trabajar (default: JARVIS)",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Pregunta (action=ask)",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "auto_programmer": {
+    "description": "Auto-programación con sandbox: create_tool, fix_tool, test_tool, list_tools. Compila, ejecuta en aislamiento, inyecta plugin.",
+    "name": "auto_programmer",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "create_tool (crear/actualizar) | fix_tool (corregir error) | test_tool (probar en sandbox) | list_tools (listar creadas)",
+          "type": "STRING"
+        },
+        "description": {
+          "description": "Descripción clara de la herramienta y su uso",
+          "type": "STRING"
+        },
+        "parameters_schema": {
+          "description": "JSON de propiedades de parámetros. Ej: '{\"param\": {\"type\": \"STRING\"}}'",
+          "type": "STRING"
+        },
+        "python_code": {
+          "description": "Código Python con la función def <tool_name>(parameters: dict, player=None) -> str:",
+          "type": "STRING"
+        },
+        "test_parameters": {
+          "description": "Parámetros mock de prueba para evaluar la ejecución de la función en el sandbox",
+          "type": "OBJECT"
+        },
+        "tool_name": {
+          "description": "Nombre de la herramienta en snake_case",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action",
+        "tool_name"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "browser_agent": {
+    "description": "Automatiza un navegador real (Playwright/Chromium). USAR para leer/scrapear sitios, extraer datos, capturar páginas o llenar formularios. Acciones: scrape (texto visible), extract (por selector CSS), links (lista links), screenshot, fill (completa campos y envía). Ej: 'leéme esta página', 'sacá los precios de este sitio', 'capturá esta web', 'llená este formulario'.",
+    "name": "browser_agent",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "scrape (texto crudo) | article (lectura LIMPIA del artículo, sin navbar/ads — para 'leéme este artículo/nota') | extract | links | screenshot | fill",
+          "type": "STRING"
+        },
+        "fields": {
+          "description": "fill: {selector: valor}",
+          "type": "OBJECT"
+        },
+        "full_page": {
+          "description": "screenshot: capturar la página completa",
+          "type": "BOOLEAN"
+        },
+        "limit": {
+          "description": "scrape: máximo de caracteres",
+          "type": "INTEGER"
+        },
+        "path": {
+          "description": "screenshot: ruta de salida",
+          "type": "STRING"
+        },
+        "selector": {
+          "description": "extract: selector CSS",
+          "type": "STRING"
+        },
+        "submit": {
+          "description": "fill: selector del botón a clickear tras llenar",
+          "type": "STRING"
+        },
+        "url": {
+          "description": "URL a abrir",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "browser_control": {
+    "description": "Navegador activo: go_to, search, new_tab, close_tab, scroll.",
+    "name": "browser_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "Acciones permitidas: go_to | search | new_tab | close_tab | scroll",
+          "type": "STRING"
+        },
+        "direction": {
+          "description": "Dirección de scroll: up | down (solo para scroll)",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Término de búsqueda para la acción search",
+          "type": "STRING"
+        },
+        "url": {
+          "description": "URL para las acciones go_to o new_tab",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "camera_vision": {
+    "description": "Mira por la cámara web SOLO cuando el usuario lo pide (privacidad) y muestra un preview en la interfaz. USAR cuando diga: 'mirá por la cámara', 'qué ves', 'activá la cámara', 'sacá una foto', 'apagá la cámara'. Acciones: on (abre la cámara + preview), analyze (describe lo que ve con Gemini, default), photo (guarda una foto), off (apaga y oculta). La cámara queda encendida (y el preview visible) hasta que se diga 'off'.",
+    "name": "camera_vision",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "on | analyze | photo | off",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Qué querés saber de lo que ve (ej '¿qué objeto tengo en la mano?', '¿cuántas personas hay?')",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "claude_code": {
+    "description": "Usa el CLI de Claude Code local (headless, con la suscripción del usuario — sin API key) para programar o responder. USAR cuando el usuario diga 'usá Claude Code', 'que lo haga Claude Code', 'preguntale a Claude', o quiera el motor de Claude Code para una tarea de código. action=run (Claude Code edita archivos en el proyecto, NO commitea) | plan (propone sin tocar) | ask (pregunta de conocimiento) | status (verifica instalación/login). Distinto de code_agent (que usa el cerebro configurado vía API).",
+    "name": "claude_code",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "run | plan | ask | status",
+          "type": "STRING"
+        },
+        "auto": {
+          "description": "true = más autónomo (salta permisos). Default false (auto-acepta solo ediciones).",
+          "type": "BOOLEAN"
+        },
+        "goal": {
+          "description": "Tarea de programación (run/plan)",
+          "type": "STRING"
+        },
+        "project_path": {
+          "description": "Proyecto donde trabajar (default: JARVIS)",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Pregunta (action=ask)",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "code_agent": {
+    "description": "Agente que ESCRIBE/EDITA código de forma autónoma (estilo Claude Code) en JARVIS o en cualquier proyecto. USAR cuando el usuario pide programar, agregar una feature, arreglar un bug, refactorizar, 'agregate X', 'mejorá tu código', etc. IMPORTANTE: SIEMPRE preguntá primero con qué cerebro programar (Claude, GPT, Gemini o MiniMax) y pasalo en 'brain' — si no se especifica, la tool te lo recuerda. NUNCA despliega solo: deja los cambios hechos en una rama y el usuario decide. action=run programa; deploy commitea los cambios (cuando el usuario diga 'desplegá'); discard los descarta; diff los muestra.",
+    "name": "code_agent",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "run (default, programa) | plan (propone sin tocar nada) | deploy | discard | diff",
+          "type": "STRING"
+        },
+        "brain": {
+          "description": "Cerebro a usar: claude | gpt | gemini | minimax (PREGUNTAR al usuario primero)",
+          "type": "STRING"
+        },
+        "goal": {
+          "description": "Qué programar/cambiar, en lenguaje natural y con detalle",
+          "type": "STRING"
+        },
+        "message": {
+          "description": "deploy: mensaje de commit (opcional)",
+          "type": "STRING"
+        },
+        "model": {
+          "description": "Modelo específico opcional (si no, el default del cerebro)",
+          "type": "STRING"
+        },
+        "project_path": {
+          "description": "Ruta del proyecto (default: el propio JARVIS)",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "compact_sessions": {
+    "description": "Resume sesiones JSONL viejas con Gemini y las archiva. action=run|stats|list. Por defecto resume sesiones de >7 días.",
+    "name": "compact_sessions",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "run (default) | stats | list",
+          "type": "STRING"
+        },
+        "dry_run": {
+          "description": "Si true, no escribe nada (preview)",
+          "type": "BOOLEAN"
+        },
+        "older_than_days": {
+          "description": "Resumir sesiones más antiguas que N días (default 7)",
+          "type": "INTEGER"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "computer_control": {
+    "description": "Mouse/teclado: type, click, hotkey, scroll, screenshot, etc. (pyautogui cross-platform).",
+    "name": "computer_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "type | smart_type | click | double_click | right_click | hotkey | press | scroll | move | copy | paste | screenshot | wait | clear_field | focus_window | screen_find | screen_click | random_data | user_data",
+          "type": "STRING"
+        },
+        "amount": {
+          "description": "Scroll amount (default: 3)",
+          "type": "INTEGER"
+        },
+        "clear_first": {
+          "description": "Clear field before typing (default: true)",
+          "type": "BOOLEAN"
+        },
+        "description": {
+          "description": "Element description for screen_find/screen_click",
+          "type": "STRING"
+        },
+        "direction": {
+          "description": "up | down | left | right",
+          "type": "STRING"
+        },
+        "field": {
+          "description": "Field for user_data: name|email|city",
+          "type": "STRING"
+        },
+        "key": {
+          "description": "Single key e.g. 'enter'",
+          "type": "STRING"
+        },
+        "keys": {
+          "description": "Key combination e.g. 'ctrl+c'",
+          "type": "STRING"
+        },
+        "path": {
+          "description": "Save path for screenshot",
+          "type": "STRING"
+        },
+        "seconds": {
+          "description": "Seconds to wait",
+          "type": "NUMBER"
+        },
+        "text": {
+          "description": "Text to type or paste",
+          "type": "STRING"
+        },
+        "title": {
+          "description": "Window title for focus_window",
+          "type": "STRING"
+        },
+        "type": {
+          "description": "Data type for random_data",
+          "type": "STRING"
+        },
+        "x": {
+          "description": "X coordinate",
+          "type": "INTEGER"
+        },
+        "y": {
+          "description": "Y coordinate",
+          "type": "INTEGER"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "computer_settings": {
+    "description": "Volumen, ventana minimize/maximize. action='volume' con value (número 0-100, up, down, mute).",
+    "name": "computer_settings",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "The action to perform",
+          "type": "STRING"
+        },
+        "description": {
+          "description": "Natural language description of what to do",
+          "type": "STRING"
+        },
+        "value": {
+          "description": "Optional value: volume level, text to type, etc.",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "consult_model": {
+    "description": "Delega razonamiento pesado a un modelo de texto (el 'cerebro' configurado: Gemini por default, o GPT/Claude). USAR cuando el usuario pide pensar a fondo, analizar, escribir código/ensayos largos, o dice 'consultale a GPT/Claude', 'pensá con X'. JARVIS sigue HABLANDO con su voz (Gemini 2.5 Flash); esto solo trae el contenido pensado. Acepta override de provider/model por llamada.",
+    "name": "consult_model",
+    "parameters": {
+      "properties": {
+        "max_tokens": {
+          "description": "Máximo de tokens de salida (default 2000)",
+          "type": "INTEGER"
+        },
+        "model": {
+          "description": "Override opcional: id de modelo (ej gpt-5.5, claude-opus-4-8, gemini-2.5-pro)",
+          "type": "STRING"
+        },
+        "prompt": {
+          "description": "La consulta / lo que hay que pensar o resolver",
+          "type": "STRING"
+        },
+        "provider": {
+          "description": "Override opcional: gemini | openai | claude",
+          "type": "STRING"
+        },
+        "system": {
+          "description": "Instrucción de sistema opcional (rol/estilo)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "contextual_control": {
+    "description": "Auto-ajusta volumen/brillo/energía/DND según ventana activa. action=adjust_context o set_volume/set_brightness/set_power_plan/set_dnd.",
+    "name": "contextual_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "adjust_context (auto-ajustar por ventana activa) | set_volume (fijar volumen) | set_brightness (fijar brillo) | set_power_plan (energía) | set_dnd (no molestar)",
+          "type": "STRING"
+        },
+        "brightness": {
+          "description": "Nivel de brillo de la pantalla (0-100)",
+          "type": "INTEGER"
+        },
+        "power_plan": {
+          "description": "Plan de energía de Windows: balanced | high_performance | power_saver",
+          "type": "STRING"
+        },
+        "state": {
+          "description": "Estado de No Molestar (Focus Assist): on | off | alarms",
+          "type": "STRING"
+        },
+        "volume": {
+          "description": "Nivel de volumen maestro (0-100)",
+          "type": "INTEGER"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "desktop_control": {
+    "description": "Escritorio: wallpaper, organize, clean, list, stats. Usa search_name+search_path para auto-encontrar archivos.",
+    "name": "desktop_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "wallpaper | wallpaper_url | organize | clean | list | stats | task",
+          "type": "STRING"
+        },
+        "mode": {
+          "description": "by_type or by_date for organize",
+          "type": "STRING"
+        },
+        "path": {
+          "description": "Image path for wallpaper",
+          "type": "STRING"
+        },
+        "search_name": {
+          "description": "Filename to search for in a directory (auto-finds full path)",
+          "type": "STRING"
+        },
+        "search_path": {
+          "description": "Directory to search: desktop, downloads, documents, pictures, home (default: desktop)",
+          "type": "STRING"
+        },
+        "task": {
+          "description": "Natural language desktop task",
+          "type": "STRING"
+        },
+        "url": {
+          "description": "Image URL for wallpaper_url",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "document_creator": {
+    "description": "Crea y procesa documentos (cross-platform). Crear: word(.docx), excel(.xlsx), powerpoint(.pptx), text. Procesar archivos/textos con IA: summarize (resumir PDF/DOCX/TXT o texto), translate (traducir, target=idioma), ocr (texto desde imagen). Ej: 'hacé un Word con...', 'armá una presentación de...', 'resumí este PDF', 'traducí este documento al inglés'.",
+    "name": "document_creator",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "word | excel | powerpoint | text | summarize | translate | ocr",
+          "type": "STRING"
+        },
+        "content": {
+          "description": "For word / google_doc: full text content. Use ## Section for main headings, # SubSection for sub-headings, - item for bullet points, blank line between paragraphs.",
+          "type": "STRING"
+        },
+        "path": {
+          "description": "summarize/translate/ocr: ruta del archivo de entrada (PDF/DOCX/TXT/imagen)",
+          "type": "STRING"
+        },
+        "save": {
+          "description": "summarize/translate: guardar el resultado en un .txt",
+          "type": "BOOLEAN"
+        },
+        "save_path": {
+          "description": "Optional: full file path to save locally (e.g. C:/Users/User/Desktop/report.docx). Defaults to ~/Documents/",
+          "type": "STRING"
+        },
+        "sheets": {
+          "description": "For excel / google_sheet: list of sheet objects. Each object has: name (string), headers (array of strings), rows (array of arrays with cell values).",
+          "items": {
+            "properties": {
+              "headers": {
+                "description": "Column headers",
+                "items": {
+                  "type": "STRING"
+                },
+                "type": "ARRAY"
+              },
+              "name": {
+                "description": "Sheet tab name",
+                "type": "STRING"
+              },
+              "rows": {
+                "description": "Data rows",
+                "items": {
+                  "items": {
+                    "type": "STRING"
+                  },
+                  "type": "ARRAY"
+                },
+                "type": "ARRAY"
+              }
+            },
+            "type": "OBJECT"
+          },
+          "type": "ARRAY"
+        },
+        "slides": {
+          "description": "powerpoint: lista de slides, cada uno con title (string) y bullets (array de strings).",
+          "items": {
+            "properties": {
+              "bullets": {
+                "description": "Viñetas del slide",
+                "items": {
+                  "type": "STRING"
+                },
+                "type": "ARRAY"
+              },
+              "title": {
+                "description": "Título del slide",
+                "type": "STRING"
+              }
+            },
+            "type": "OBJECT"
+          },
+          "type": "ARRAY"
+        },
+        "target": {
+          "description": "translate: idioma destino (ej 'inglés', 'francés')",
+          "type": "STRING"
+        },
+        "title": {
+          "description": "Title or filename of the document/spreadsheet",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action",
+        "title"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "facetime": {
+    "description": "Llama por FaceTime (SOLO Mac). USAR cuando el usuario diga 'llamá a X', 'llamalo/llamala', 'hacele una llamada a X', 'videollamada con X'. Resuelve el nombre contra la agenda de Apple (ej 'Mamá'). mode=audio (default, llamada normal) | video (videollamada). FaceTime pide confirmación con un click antes de llamar.",
+    "name": "facetime",
+    "parameters": {
+      "properties": {
+        "contact": {
+          "description": "Nombre del contacto (como en la agenda, ej 'Mamá') o número con código de país.",
+          "type": "STRING"
+        },
+        "mode": {
+          "description": "audio (default) | video",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "contact"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "figma_control": {
+    "description": "Integración con Figma (REST API). USAR cuando el usuario menciona Figma o pasa una URL de figma.com: 'leé este archivo de Figma', 'exportá este frame a PNG', 'qué comentarios tiene', 'comentá X', 'mostrame los frames'. Acciones: me (probar token), info (estructura del archivo), export (renderizar nodos a PNG/SVG/PDF y descargar), comments (listar), comment (publicar), projects (archivos de un proyecto).",
+    "name": "figma_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "me | info | export | comments | comment | projects",
+          "type": "STRING"
+        },
+        "format": {
+          "description": "export: png | svg | pdf | jpg (default png)",
+          "type": "STRING"
+        },
+        "message": {
+          "description": "comment: texto del comentario",
+          "type": "STRING"
+        },
+        "node_id": {
+          "description": "export: id del nodo/frame a exportar (o usar una URL con ?node-id=)",
+          "type": "STRING"
+        },
+        "project_id": {
+          "description": "projects: id del proyecto",
+          "type": "STRING"
+        },
+        "scale": {
+          "description": "export: escala para png/jpg (default 2)",
+          "type": "NUMBER"
+        },
+        "url": {
+          "description": "URL del archivo de Figma (o la file key)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "file_controller": {
+    "description": "Archivos/carpetas: list, create_file, create_folder, delete (papelera), move, copy, rename, read, write, edit, find, largest, disk_usage, info.",
+    "name": "file_controller",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "list | create_file | create_folder | delete (mueve a papelera) | move | copy | rename | read | write | edit | find | largest | disk_usage | organize_desktop | info",
+          "type": "STRING"
+        },
+        "confirm": {
+          "description": "true para confirmar eliminaciones",
+          "type": "BOOLEAN"
+        },
+        "content": {
+          "description": "Content for create_file/write",
+          "type": "STRING"
+        },
+        "count": {
+          "description": "Number of results for largest",
+          "type": "INTEGER"
+        },
+        "destination": {
+          "description": "Destination path for move/copy",
+          "type": "STRING"
+        },
+        "extension": {
+          "description": "File extension to search (e.g. .pdf)",
+          "type": "STRING"
+        },
+        "mode": {
+          "description": "replace | append | prepend | overwrite (para edit)",
+          "type": "STRING"
+        },
+        "name": {
+          "description": "File name to search for",
+          "type": "STRING"
+        },
+        "new_name": {
+          "description": "New name for rename",
+          "type": "STRING"
+        },
+        "new_text": {
+          "description": "Nuevo texto o contenido (para edit)",
+          "type": "STRING"
+        },
+        "old_text": {
+          "description": "Texto a reemplazar (para edit)",
+          "type": "STRING"
+        },
+        "path": {
+          "description": "File/folder path or shortcut: desktop, downloads, documents, home",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "git_control": {
+    "description": "Git: status, log, diff, add, commit, push, pull, branch, clone.",
+    "name": "git_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "status | log | diff | commit | add | branches | branch_create | checkout | pull | push | stash | analyze",
+          "type": "STRING"
+        },
+        "add_all": {
+          "description": "Agregar todos los archivos antes del commit (default: true)",
+          "type": "BOOLEAN"
+        },
+        "branch_name": {
+          "description": "Nombre de la rama",
+          "type": "STRING"
+        },
+        "file": {
+          "description": "Archivo específico para diff",
+          "type": "STRING"
+        },
+        "files": {
+          "description": "Archivos para add",
+          "items": {
+            "type": "STRING"
+          },
+          "type": "ARRAY"
+        },
+        "message": {
+          "description": "Mensaje del commit",
+          "type": "STRING"
+        },
+        "n": {
+          "description": "Número de commits para log",
+          "type": "INTEGER"
+        },
+        "remote": {
+          "description": "Remote (default: origin)",
+          "type": "STRING"
+        },
+        "repo_path": {
+          "description": "Ruta al repositorio Git",
+          "type": "STRING"
+        },
+        "staged": {
+          "description": "Mostrar diff staged",
+          "type": "BOOLEAN"
+        },
+        "sub": {
+          "description": "Subcomando para stash: push|pop|list",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action",
+        "repo_path"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "gmail_control": {
+    "description": "Gmail: inbox, read, send, reply, search, archive, delete, mark_read, labels.",
+    "name": "gmail_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "inbox | read | send | reply | search | archive | delete | mark_read | labels",
+          "type": "STRING"
+        },
+        "body": {
+          "description": "Cuerpo del correo para send/reply",
+          "type": "STRING"
+        },
+        "confirm": {
+          "description": "true para confirmar eliminación",
+          "type": "BOOLEAN"
+        },
+        "count": {
+          "description": "Cantidad de correos a listar/buscar (default: 5)",
+          "type": "INTEGER"
+        },
+        "message_id": {
+          "description": "ID del mensaje para read/reply/archive/delete/mark_read",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Búsqueda Gmail para search (ej: 'from:juan', 'subject:factura')",
+          "type": "STRING"
+        },
+        "subject": {
+          "description": "Asunto para send",
+          "type": "STRING"
+        },
+        "to": {
+          "description": "Destinatario para send",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "goals": {
+    "description": "Metas a largo plazo con steps y progreso: list, create, update_progress, complete, complete_step, add_step, delete, detail.",
+    "name": "goals",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "list | create | update_progress | complete | complete_step | add_step | delete | detail",
+          "type": "STRING"
+        },
+        "deadline": {
+          "description": "Fecha límite ISO (YYYY-MM-DD)",
+          "type": "STRING"
+        },
+        "description": {
+          "description": "Descripción detallada",
+          "type": "STRING"
+        },
+        "goal_id": {
+          "description": "ID del objetivo para update/complete/delete/detail",
+          "type": "STRING"
+        },
+        "progress": {
+          "description": "Progreso 0-100",
+          "type": "INTEGER"
+        },
+        "step": {
+          "description": "Texto del nuevo paso (add_step)",
+          "type": "STRING"
+        },
+        "step_index": {
+          "description": "Índice del paso a completar (0-based)",
+          "type": "INTEGER"
+        },
+        "steps": {
+          "description": "Lista de pasos del objetivo",
+          "items": {
+            "type": "STRING"
+          },
+          "type": "ARRAY"
+        },
+        "title": {
+          "description": "Título del objetivo",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "google_calendar": {
+    "description": "Calendar: list (próximos N días), create (summary+start), edit/delete (event_id desde list).",
+    "name": "google_calendar",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "list | create | edit | delete",
+          "type": "STRING"
+        },
+        "days_ahead": {
+          "description": "Days to look ahead for list (default: 7)",
+          "type": "INTEGER"
+        },
+        "description": {
+          "description": "Event notes or description",
+          "type": "STRING"
+        },
+        "end": {
+          "description": "End date/time (optional — defaults to start + 1 hour)",
+          "type": "STRING"
+        },
+        "event_id": {
+          "description": "Event ID (first 8 chars from list) for edit/delete",
+          "type": "STRING"
+        },
+        "location": {
+          "description": "Event location",
+          "type": "STRING"
+        },
+        "start": {
+          "description": "Start date/time: ISO, YYYY-MM-DD HH:MM, or DD/MM/YYYY HH:MM",
+          "type": "STRING"
+        },
+        "summary": {
+          "description": "Event title/name",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "google_drive": {
+    "description": "Drive: list, search, upload, download, create_folder, delete, share, info.",
+    "name": "google_drive",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "list | search | upload | download | create_folder | delete | share | info",
+          "type": "STRING"
+        },
+        "confirm": {
+          "description": "true para confirmar eliminación",
+          "type": "BOOLEAN"
+        },
+        "destination": {
+          "description": "Carpeta local de destino para download",
+          "type": "STRING"
+        },
+        "email": {
+          "description": "Email para compartir",
+          "type": "STRING"
+        },
+        "file_id": {
+          "description": "ID del archivo para download/delete/share/info",
+          "type": "STRING"
+        },
+        "folder_id": {
+          "description": "ID de la carpeta (default: root)",
+          "type": "STRING"
+        },
+        "name": {
+          "description": "Nombre de la nueva carpeta",
+          "type": "STRING"
+        },
+        "path": {
+          "description": "Ruta local para upload",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Término de búsqueda",
+          "type": "STRING"
+        },
+        "role": {
+          "description": "reader | writer | commenter",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "google_maps": {
+    "description": "Maps: directions (origin+destination, mode car/walk/bike) o search.",
+    "name": "google_maps",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "directions | search",
+          "type": "STRING"
+        },
+        "destination": {
+          "description": "Destino (dirección, ciudad, lugar)",
+          "type": "STRING"
+        },
+        "mode": {
+          "description": "car (auto) | walk (caminando) | bike (bicicleta). Default: car",
+          "type": "STRING"
+        },
+        "origin": {
+          "description": "Punto de partida (dirección, ciudad, lugar)",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Lugar a buscar en el mapa (para action=search)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "image_fetch": {
+    "description": "Busca una imagen en la web y la descarga al disco (carpeta ~/Pictures/JARVIS). USAR cuando el usuario dice 'descargame/buscame una imagen de X', 'bajá una foto de Y'. Devuelve la ruta del archivo. Para meterla luego en Illustrator y vectorizarla, mejor usar adobe_control action=place_trace directamente con el query.",
+    "name": "image_fetch",
+    "parameters": {
+      "properties": {
+        "path": {
+          "description": "Ruta de destino opcional; si se omite va a ~/Pictures/JARVIS",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Qué imagen buscar (ej: 'galleta caricatura png')",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "jarvis_ui_control": {
+    "description": "Controla la ventana JARVIS y widgets del dashboard (weather, spotify, system, notes, todo, maps, image, camera).",
+    "name": "jarvis_ui_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "minimize (minimizar ventana) | restore (restaurar ventana) | show (mostrar widget) | hide (ocultar widget) | hide_all (ocultar todos los widgets) | toggle (alternar widget)",
+          "type": "STRING"
+        },
+        "widget": {
+          "description": "Nombre del widget (solo para show/hide/toggle): weather | spotify | system | notes | todo | maps | image | camera",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "knowledge_base": {
+    "description": "Notas personales locales: add, search, list, delete.",
+    "name": "knowledge_base",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "add/save/store | search/find | list | get/read/view | update | delete | stats | export",
+          "type": "STRING"
+        },
+        "content": {
+          "description": "Contenido o texto a guardar",
+          "type": "STRING"
+        },
+        "entry_id": {
+          "description": "ID de la entrada para get/update/delete",
+          "type": "STRING"
+        },
+        "path": {
+          "description": "Ruta para exportar (action=export)",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Búsqueda en la base de conocimiento",
+          "type": "STRING"
+        },
+        "tags": {
+          "description": "Tags separados por coma (ej: python, jarvis, idea)",
+          "type": "STRING"
+        },
+        "title": {
+          "description": "Título de la entrada",
+          "type": "STRING"
+        },
+        "type": {
+          "description": "note | idea | snippet | reference | fact | task | question",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "mac_control": {
+    "description": "Controla macOS y apps nativas (gratis, AppleScript). USAR para: crear/listar Notas y Recordatorios, enviar iMessage, mostrar archivos en Finder, screenshot, modo oscuro, WiFi, fondo de pantalla, abrir/leer pestaña del navegador, vaciar papelera. Ej: 'creá una nota', 'recordame X', 'sacá un screenshot', 'poné modo oscuro'. Para algo de macOS que NINGUNA acción cubre: action=run_script con AppleScript propio (escape hatch).",
+    "name": "mac_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "permissions (configura los permisos de macOS) | check_permissions | notes_add | notes_list | reminder_add | reminders_list | message_send | finder_reveal | finder_new_folder | empty_trash | screenshot | dark_mode | wifi | bluetooth | wallpaper | brightness | browser_open | browser_tab | run_script",
+          "type": "STRING"
+        },
+        "body": {
+          "description": "Cuerpo de la nota",
+          "type": "STRING"
+        },
+        "deep": {
+          "description": "permissions: true = también dispara prompts de Notas/Recordatorios/Mensajes/Chrome (las abre).",
+          "type": "BOOLEAN"
+        },
+        "level": {
+          "description": "brightness: 0-100",
+          "type": "INTEGER"
+        },
+        "limit": {
+          "description": "notes_list: cuántas listar",
+          "type": "INTEGER"
+        },
+        "mode": {
+          "description": "screenshot: full | window | selection",
+          "type": "STRING"
+        },
+        "path": {
+          "description": "Ruta (finder_reveal, finder_new_folder, screenshot, wallpaper)",
+          "type": "STRING"
+        },
+        "script": {
+          "description": "run_script: AppleScript a ejecutar tal cual (casos que las acciones no cubren). Devuelve el resultado.",
+          "type": "STRING"
+        },
+        "state": {
+          "description": "on | off | toggle (dark_mode, wifi, bluetooth)",
+          "type": "STRING"
+        },
+        "text": {
+          "description": "Cuerpo del texto / mensaje / recordatorio",
+          "type": "STRING"
+        },
+        "title": {
+          "description": "Título (notes_add / reminder_add)",
+          "type": "STRING"
+        },
+        "to": {
+          "description": "message_send: destinatario (número o nombre)",
+          "type": "STRING"
+        },
+        "url": {
+          "description": "browser_open: URL a abrir",
+          "type": "STRING"
+        },
+        "when": {
+          "description": "reminder_add: fecha/hora ej '2026-05-30 09:00'",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "manage_keys": {
+    "description": "Abre la ventana de configuración de API keys o muestra el estado de las integraciones. USAR cuando: una integración falla por falta de API key (abrila para que el usuario la cargue), el usuario dice 'configurá las keys', 'poné mi api key de X', 'cambiá la clave de Y', o pregunta 'qué tengo configurado'. action=open abre la ventana (integration resalta lo que falta); status lista qué integraciones tienen clave.",
+    "name": "manage_keys",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "open (abre la ventana) | status",
+          "type": "STRING"
+        },
+        "integration": {
+          "description": "Integración a resaltar: gemini, openai, claude, spotify, tuya, github, telegram, brave, notion, composio, tmdb, openrouter",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "mcp_explorer": {
+    "description": "Investigador de MCPs (Model Context Protocol). Corre en background investigando integraciones nuevas con plan de instalación. USAR cuando el usuario pregunte '¿qué integraciones nuevas hay?', '¿qué MCPs me sirven?', 'investigá nuevos MCPs', '¿cómo instalo X MCP?'. Acciones: list (top candidatos), details (plan de un MCP), status, research (forzar scan), installed, dismiss.",
+    "name": "mcp_explorer",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "list (default) | status | details | research | installed | dismiss",
+          "type": "STRING"
+        },
+        "id": {
+          "description": "ID o nombre del MCP (para details/dismiss)",
+          "type": "STRING"
+        },
+        "min_relevance": {
+          "description": "Umbral mínimo de relevancia para list (default 5)",
+          "type": "INTEGER"
+        },
+        "name": {
+          "description": "Alias de id",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "media_download": {
+    "description": "Descarga video/audio/subtítulos de YouTube y +1000 sitios (yt-dlp). Acciones: video (default), audio (MP3/M4A), subs (subtítulos .srt), info (datos sin descargar). Ej: 'bajá este video', 'descargá esta canción en MP3', 'bajá los subtítulos'. Se guarda en ~/Downloads/JARVIS.",
+    "name": "media_download",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "video (default) | audio | subs | info",
+          "type": "STRING"
+        },
+        "dest": {
+          "description": "Carpeta de salida (default ~/Downloads/JARVIS)",
+          "type": "STRING"
+        },
+        "lang": {
+          "description": "subs: idioma, ej 'es'",
+          "type": "STRING"
+        },
+        "url": {
+          "description": "URL del video/audio",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "media_edit": {
+    "description": "Edita imágenes y PDF localmente sin abrir apps pesadas. Imagen: img_resize, img_convert, img_crop, img_rotate, img_watermark, img_remove_bg (quita fondo, requiere rembg). PDF: pdf_merge, pdf_split, pdf_extract_text, pdf_info. Ej: 'redimensioná esta imagen a 800px', 'convertí a JPG', 'quitá el fondo', 'uní estos PDFs', 'extraé el texto del PDF'.",
+    "name": "media_edit",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "img_resize | img_convert | img_crop | img_rotate | img_watermark | img_remove_bg | pdf_merge | pdf_split | pdf_extract_text | pdf_info",
+          "type": "STRING"
+        },
+        "box": {
+          "description": "img_crop: [left,top,right,bottom]",
+          "items": {
+            "type": "INTEGER"
+          },
+          "type": "ARRAY"
+        },
+        "degrees": {
+          "description": "img_rotate: grados",
+          "type": "NUMBER"
+        },
+        "dest": {
+          "description": "Ruta de salida (opcional, se autogenera)",
+          "type": "STRING"
+        },
+        "format": {
+          "description": "img_convert: png|jpg|webp...",
+          "type": "STRING"
+        },
+        "height": {
+          "description": "img_resize: alto exacto",
+          "type": "INTEGER"
+        },
+        "inputs": {
+          "description": "pdf_merge: lista de PDFs a unir",
+          "items": {
+            "type": "STRING"
+          },
+          "type": "ARRAY"
+        },
+        "max_side": {
+          "description": "img_resize: lado máximo en px",
+          "type": "INTEGER"
+        },
+        "pages": {
+          "description": "pdf_split/pdf_extract_text: rango ej '2-5'",
+          "type": "STRING"
+        },
+        "path": {
+          "description": "Ruta del archivo de entrada",
+          "type": "STRING"
+        },
+        "text": {
+          "description": "img_watermark: texto de la marca",
+          "type": "STRING"
+        },
+        "width": {
+          "description": "img_resize: ancho exacto",
+          "type": "INTEGER"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "model_config": {
+    "description": "Configura o muestra el 'cerebro de pensamiento' (modelo que usa consult_model) Y la prioridad del cerebro para PROGRAMAR. USAR cuando el usuario dice: 'usá GPT para pensar', 'cambiá a Claude', 'poné gemini 2.5 pro', 'qué modelos hay', 'qué cerebro estás usando' (→ status/set); o 'para programar priorizá X', 'preguntame siempre cuál usar para programar', 'usá automáticamente mi prioridad' (→ action=code_brain). action=status lista modelos; action=set cambia proveedor/modelo de pensamiento; action=code_brain muestra/cambia la prioridad de programación (mode=ask|auto). La voz NO cambia (siempre Gemini 2.5 Flash).",
+    "name": "model_config",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "status (lista y muestra el actual) | set | code_brain (prioridad para programar)",
+          "type": "STRING"
+        },
+        "mode": {
+          "description": "action=code_brain: ask (preguntar cuál usar cuando hay varias) | auto (usar la 1ra de mi prioridad). Sin mode = solo muestra el estado.",
+          "type": "STRING"
+        },
+        "model": {
+          "description": "set: id del modelo de pensamiento (opcional; si se omite usa el default del proveedor)",
+          "type": "STRING"
+        },
+        "provider": {
+          "description": "set (cerebro de PENSAMIENTO): gemini | openai | claude | minimax | claude_cli | antigravity (CLIs sin API key)",
+          "type": "STRING"
+        },
+        "voice": {
+          "description": "set: cambiar el modelo de VOZ (independiente del cerebro). Default gemini-2.5-flash audio nativo. Solo si el usuario pide cambiar la voz.",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "morning_brief": {
+    "description": "Informe matutino: saludo, hora, fecha, clima, objetivos, consejo. force=true para forzar repetir.",
+    "name": "morning_brief",
+    "parameters": {
+      "properties": {
+        "force": {
+          "description": "Si True, genera el informe aunque ya se haya dado hoy.",
+          "type": "BOOLEAN"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "native_ui": {
+    "description": "Automatización de ventanas nativas: list_windows, focus_window, type_in_window, click_center. Cross-platform (Mac vía System Events, Windows vía pygetwindow).",
+    "name": "native_ui",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "Acción a realizar: list_windows | focus_window | type_in_window | click_center",
+          "type": "STRING"
+        },
+        "text": {
+          "description": "El texto a escribir (solo si action es type_in_window)",
+          "type": "STRING"
+        },
+        "window_title": {
+          "description": "El nombre (o parte del nombre) de la ventana destino. (Ej: 'WhatsApp', 'Chrome')",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "notifications": {
+    "description": "Controla notificaciones proactivas y modo No Molestar. USAR cuando el usuario dice: 'avisame si me escribe X', 'avisame de TODOS los WhatsApp' (add_alert source=whatsapp SIN contact = catch-all), 'silenciá WhatsApp/iMessage/email por N hora(s)', 'dejame en paz por N minutos', '¿quién me escribió?', 'quitá el silencio', 'modo concentración'. Los remitentes de WhatsApp se muestran con el nombre de la agenda de Apple (ej 'Mamá'). Acciones: status | add_alert | remove_alert | list_alerts | dnd_on | dnd_off | dnd_status.",
+    "name": "notifications",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "status | add_alert | remove_alert | list_alerts | dnd_on | dnd_off | dnd_status",
+          "type": "STRING"
+        },
+        "contact": {
+          "description": "Para add_alert: nombre del contacto a vigilar",
+          "type": "STRING"
+        },
+        "duration": {
+          "description": "Para dnd_on: duración natural '1h', '30m', '2h30m' o segundos",
+          "type": "STRING"
+        },
+        "id": {
+          "description": "Para remove_alert: id de la regla",
+          "type": "STRING"
+        },
+        "keyword": {
+          "description": "Para add_alert: palabra clave en el mensaje",
+          "type": "STRING"
+        },
+        "name": {
+          "description": "Para add_alert: nombre descriptivo de la regla",
+          "type": "STRING"
+        },
+        "scope": {
+          "description": "Para dnd_on: all | imessage | whatsapp | gmail | contact:NOMBRE",
+          "type": "STRING"
+        },
+        "source": {
+          "description": "imessage | whatsapp | gmail | * (default *)",
+          "type": "STRING"
+        },
+        "whitelist_contacts": {
+          "description": "Contactos que SÍ alertan aunque haya DND",
+          "items": {
+            "type": "STRING"
+          },
+          "type": "ARRAY"
+        },
+        "whitelist_keywords": {
+          "description": "Palabras que SÍ alertan aunque haya DND (ej: 'urgente')",
+          "items": {
+            "type": "STRING"
+          },
+          "type": "ARRAY"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "open_app": {
+    "description": "Abre cualquier app del SO. Llamar siempre — no decir que abriste sin invocarlo.",
+    "name": "open_app",
+    "parameters": {
+      "properties": {
+        "app_name": {
+          "description": "Exact name of the application (e.g. 'WhatsApp', 'Chrome', 'Spotify')",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "app_name"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "openrouter_agent": {
+    "description": "Delega tareas de pensamiento pesado (código largo, ensayos, razonamiento profundo) a un Gemini de texto.",
+    "name": "openrouter_agent",
+    "parameters": {
+      "properties": {
+        "model": {
+          "description": "Opcional. Modelo Gemini a usar, por defecto gemini-2.5-flash",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "El prompt o instrucción completa para el agente especialista",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "planner": {
+    "description": "Resuelve tareas multi-step descomponiendo el goal en pasos y ejecutándolos. USAR cuando la petición requiere varias tools encadenadas (ej: 'buscame X, encontrá lo mejor, guardalo'). Si es 1 sola tool obvia, NO usar planner — llamar directo.",
+    "name": "planner",
+    "parameters": {
+      "properties": {
+        "dry_run": {
+          "description": "Solo mostrar plan sin ejecutar",
+          "type": "BOOLEAN"
+        },
+        "goal": {
+          "description": "Descripción completa de la tarea compleja",
+          "type": "STRING"
+        },
+        "max_steps": {
+          "description": "Máx pasos (default 8)",
+          "type": "INTEGER"
+        },
+        "stop_on_failure": {
+          "description": "Detener si un paso falla (default true)",
+          "type": "BOOLEAN"
+        }
+      },
+      "required": [
+        "goal"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "proactive_automation": {
+    "description": "Reglas por hábitos del SO: add_rule, list_rules, delete_rule, trigger_check. Triggers: cpu_high, ram_high, time_of_day, app_open.",
+    "name": "proactive_automation",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "add_rule (añadir regla) | list_rules (listar) | delete_rule (eliminar) | trigger_check (evaluar reglas activas)",
+          "type": "STRING"
+        },
+        "action_to_take": {
+          "description": "Acción a ejecutar (ej. 'optimize_ram', 'mute_system', 'run_script')",
+          "type": "STRING"
+        },
+        "rule_name": {
+          "description": "Nombre identificativo de la regla de automatización",
+          "type": "STRING"
+        },
+        "trigger": {
+          "description": "Disparador: cpu_high | ram_high | time_of_day | app_open",
+          "type": "STRING"
+        },
+        "trigger_value": {
+          "description": "Valor del disparador (ej. '85' para 85% cpu, '22:00' para hora, 'chrome.exe' para app)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "realtime_info": {
+    "description": "Datos en tiempo real, gratis. USAR para: 'cuánto está el bitcoin/ethereum' (crypto), 'a cuánto está el dólar', 'convertí 100 USD a pesos' (currency), 'cómo está la acción de Apple/Tesla' (stock), 'últimas noticias de X' (news).",
+    "name": "realtime_info",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "crypto | currency | stock | news",
+          "type": "STRING"
+        },
+        "amount": {
+          "description": "currency: monto a convertir",
+          "type": "NUMBER"
+        },
+        "base": {
+          "description": "currency: moneda origen (ej USD)",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "crypto: monedas (ej 'btc eth'); news: tema",
+          "type": "STRING"
+        },
+        "symbol": {
+          "description": "stock: símbolo (AAPL, TSLA, MSFT)",
+          "type": "STRING"
+        },
+        "target": {
+          "description": "currency: moneda destino (ej COP, EUR)",
+          "type": "STRING"
+        },
+        "vs": {
+          "description": "crypto: moneda de referencia (usd default)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "recall": {
+    "description": "Busca en episodios pasados (sesiones .jsonl). Usar cuando el usuario pregunta '¿hicimos esto antes?', '¿qué hicimos ayer?', '¿cuándo abrí X por última vez?'.",
+    "name": "recall",
+    "parameters": {
+      "properties": {
+        "days": {
+          "description": "Días hacia atrás (default 30)",
+          "type": "INTEGER"
+        },
+        "limit": {
+          "description": "Máx resultados (default 15)",
+          "type": "INTEGER"
+        },
+        "query": {
+          "description": "Texto a buscar en turnos/tool calls",
+          "type": "STRING"
+        },
+        "tool": {
+          "description": "Opcional. Filtrar por nombre de tool",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "reminder": {
+    "description": "Recordatorio con notificación nativa (persiste aunque JARVIS se reinicie). Acepta hora exacta (time=HH:MM, date opcional YYYY-MM-DD/'hoy'/'mañana') o un plazo (delay='20m', '2h', '45 minutos').",
+    "name": "reminder",
+    "parameters": {
+      "properties": {
+        "date": {
+          "description": "Fecha: YYYY-MM-DD, 'hoy' o 'mañana' (opcional; default hoy/mañana según la hora)",
+          "type": "STRING"
+        },
+        "delay": {
+          "description": "Plazo relativo: '30s', '20m', '2h', '45 minutos' (alternativa a date+time)",
+          "type": "STRING"
+        },
+        "message": {
+          "description": "Texto del recordatorio",
+          "type": "STRING"
+        },
+        "time": {
+          "description": "Hora exacta HH:MM (24h), o un plazo si no hay hora (ej \"20m\")",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "restart_jarvis": {
+    "description": "Reinicia JARVIS: lanza una instancia nueva y cierra la actual (vuelve solo en unos segundos). USAR cuando el usuario diga 'reiniciate', 'reiniciá JARVIS', 'reiniciate vos mismo', 'reseteate', o cuando haga falta aplicar cambios de código/voz/UI que requieren reinicio. No es lo mismo que apagar (shutdown_jarvis): esto vuelve solo.",
+    "name": "restart_jarvis",
+    "parameters": {
+      "properties": {},
+      "type": "OBJECT"
+    }
+  },
+  "rules_engine": {
+    "description": "Automatizaciones por frase/hora/archivo. condition + action_def. Ver parámetros para esquema.",
+    "name": "rules_engine",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "list | list_phrases | create | delete | enable | disable | trigger | alert",
+          "type": "STRING"
+        },
+        "action_def": {
+          "description": "Acción a ejecutar. open_app: {type:open_app, app_name:'Spotify'}. spotify_play: {type:spotify_play, query:'Back in Black AC/DC'}. browser: {type:browser, url:'https://...'}. smart_home: {type:smart_home, device:'living', action:'on'}. composite: {type:composite, actions:[{...},{...}]}. notify: {type:notify, message:'...'}. speak: {type:speak, message:'...'}. run_script: {type:run_script, command:'...'}.",
+          "type": "OBJECT"
+        },
+        "condition": {
+          "description": "Condición. phrase: {type:phrase, trigger:'texto exacto', match:contains|exact|startswith}. time: {type:time, hour:8, minute:0, days:[monday,...]}. file_exists: {type:file_exists, path:'...'}. always: {type:always}",
+          "type": "OBJECT"
+        },
+        "message": {
+          "description": "Mensaje para action=alert",
+          "type": "STRING"
+        },
+        "name": {
+          "description": "Nombre de la automatización",
+          "type": "STRING"
+        },
+        "rule_id": {
+          "description": "ID de la regla para delete/enable/disable/trigger",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "save_memory": {
+    "description": "Guardar hecho personal en memoria de largo plazo. Llamar en silencio. NO para clima/recordatorios/comandos puntuales. Values en inglés.",
+    "name": "save_memory",
+    "parameters": {
+      "properties": {
+        "category": {
+          "description": "identity — name, age, birthday, city, job, language, nationality | preferences — favorite food/color/music/film/game/sport, hobbies | projects — active projects, goals, things being built | relationships — friends, family, partner, colleagues | wishes — future plans, things to buy, travel dreams | notes — habits, schedule, anything else worth remembering",
+          "type": "STRING"
+        },
+        "key": {
+          "description": "Short snake_case key (e.g. name, favorite_food, sister_name)",
+          "type": "STRING"
+        },
+        "value": {
+          "description": "Concise value in English (e.g. Fatih, pizza, older sister)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "category",
+        "key",
+        "value"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "scheduler": {
+    "description": "Tareas recurrentes: list, create, delete, enable, disable, run_now. Frecuencias: daily, weekly, interval, once.",
+    "name": "scheduler",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "list | create | delete | enable | disable | run_now",
+          "type": "STRING"
+        },
+        "frequency": {
+          "description": "daily | weekly | interval | once",
+          "type": "STRING"
+        },
+        "hour": {
+          "description": "Hora de ejecución (0-23)",
+          "type": "INTEGER"
+        },
+        "interval_minutes": {
+          "description": "Intervalo en minutos para frequency=interval",
+          "type": "INTEGER"
+        },
+        "minute": {
+          "description": "Minuto de ejecución (0-59)",
+          "type": "INTEGER"
+        },
+        "name": {
+          "description": "Nombre descriptivo de la tarea",
+          "type": "STRING"
+        },
+        "task_action": {
+          "description": "backup | file_controller | notify | custom_script | browser_control",
+          "type": "STRING"
+        },
+        "task_id": {
+          "description": "ID de la tarea (primeros 6 chars) para delete/enable/disable/run_now",
+          "type": "STRING"
+        },
+        "task_parameters": {
+          "description": "Parámetros de la tarea (source, destination para backup, etc.)",
+          "type": "OBJECT"
+        },
+        "weekday": {
+          "description": "Día de la semana para frequency=weekly",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "screen_process": {
+    "description": "Captura y analiza pantalla o webcam. Sin esto no podés ver. Tras llamarlo, callate — el módulo habla solo.",
+    "name": "screen_process",
+    "parameters": {
+      "properties": {
+        "angle": {
+          "description": "'screen' to capture display, 'camera' for webcam. Default: 'screen'",
+          "type": "STRING"
+        },
+        "text": {
+          "description": "The question or instruction about the captured image",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "screen_vision": {
+    "description": "VER la pantalla con IA: describe, question (con question), help, read (texto visible).",
+    "name": "screen_vision",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "describe=describir qué hay en pantalla | question=responder pregunta sobre la pantalla | help=dar ayuda contextual | read=leer todo el texto visible",
+          "type": "STRING"
+        },
+        "monitor": {
+          "description": "0=toda la pantalla (default), 1=monitor principal, 2=segundo monitor",
+          "type": "INTEGER"
+        },
+        "question": {
+          "description": "Pregunta o tarea específica sobre lo que se ve en pantalla (para action=question/help)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "self_edit": {
+    "description": "Edita tu propio código con backup automático. Acciones: read_file, edit_file (target+replacement), append_file, create_file, list_files, list_backups, restore_backup. Cambios en main.py o prompt requieren reinicio.",
+    "name": "self_edit",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "read_file — leer un archivo del proyecto | edit_file — buscar y reemplazar texto en un archivo (requiere target y replacement) | append_file — agregar contenido al final de un archivo | create_file — crear o sobrescribir un archivo | list_files — listar archivos de un directorio | list_backups — ver backups disponibles | restore_backup — restaurar un backup anterior",
+          "type": "STRING"
+        },
+        "backup_name": {
+          "description": "Para restore_backup: nombre del archivo .bak a restaurar",
+          "type": "STRING"
+        },
+        "content": {
+          "description": "Para append_file/create_file: el contenido a escribir",
+          "type": "STRING"
+        },
+        "directory": {
+          "description": "Para list_files: directorio a listar (default: raíz del proyecto)",
+          "type": "STRING"
+        },
+        "file": {
+          "description": "Ruta del archivo relativa al proyecto (ej: 'main.py', 'actions/terminal_agent.py', 'core/prompt.txt')",
+          "type": "STRING"
+        },
+        "replacement": {
+          "description": "Para edit_file: el texto que reemplazará al target",
+          "type": "STRING"
+        },
+        "target": {
+          "description": "Para edit_file: el texto EXACTO a buscar (incluyendo espacios e indentación)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "set_theme": {
+    "description": "Cambia el color/tema de la interfaz de JARVIS en vivo. USAR cuando el usuario diga 'usá color rojo', 'ponete azul neón', 'cambiá a verde', 'cambiá el tema a morado', o dé un hex. Aplica al instante (orb, paneles, bordes) y lo recuerda.",
+    "name": "set_theme",
+    "parameters": {
+      "properties": {
+        "color": {
+          "description": "Color: rojo, azul, azul neón, verde, morado, rosa, dorado, blanco, turquesa... o un hex '#00e5ff'",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "color"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "set_timezone": {
+    "description": "Cambia la zona horaria de JARVIS por voz. USAR cuando el usuario diga 'cambiá la zona horaria a X', 'poné la hora de México', 'usá el horario de Buenos Aires/España', etc. Acepta país o ciudad. Afecta el saludo (buenos días/tardes/noches), recordatorios y scheduler. Se aplica en vivo y se guarda.",
+    "name": "set_timezone",
+    "parameters": {
+      "properties": {
+        "place": {
+          "description": "País o ciudad de la zona horaria (ej: 'México', 'Buenos Aires', 'España', 'Nueva York') o un nombre IANA (America/Bogota).",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "place"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "shutdown_jarvis": {
+    "description": "Cierra JARVIS. Llamar cuando el usuario se despide o pide terminar.",
+    "name": "shutdown_jarvis",
+    "parameters": {
+      "properties": {},
+      "type": "OBJECT"
+    }
+  },
+  "skill_teach": {
+    "description": "Aprende una skill nueva: genera carpeta skills/<name>/SKILL.md + skill.py vía Gemini, la testea en sandbox, queda activa sin reiniciar. USAR cuando el usuario diga: 'aprendete', 'aprende a hacer X', 'creá una skill para Y', 'cuando diga X hacé Y como rutina'.",
+    "name": "skill_teach",
+    "parameters": {
+      "properties": {
+        "description": {
+          "description": "Descripción natural de qué tiene que hacer la skill (lo que dijo el usuario)",
+          "type": "STRING"
+        },
+        "name_hint": {
+          "description": "Opcional. Nombre sugerido en snake_case (ej: modo_concentracion)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "description"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "skill_workshop": {
+    "description": "Observador nocturno: revisa episodios, propone skills nuevas o fixes. Acciones: review (escanea), list (muestra pendientes), approve (ejecuta por id), reject (descarta), clear, stats. USAR cuando el usuario pregunte '¿qué encontraste?' o '¿hay sugerencias?' o pida 'revisá la memoria'.",
+    "name": "skill_workshop",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "review (default) | list | approve | reject | clear | stats",
+          "type": "STRING"
+        },
+        "days": {
+          "description": "Días a revisar (default 7)",
+          "type": "INTEGER"
+        },
+        "id": {
+          "description": "ID de propuesta para approve/reject (primeros 4-8 chars)",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "sleep_mode": {
+    "description": "Modo suspensión: micrófono off hasta que el usuario diga 'JARVIS'.",
+    "name": "sleep_mode",
+    "parameters": {
+      "properties": {},
+      "type": "OBJECT"
+    }
+  },
+  "smart_file_organizer": {
+    "description": "Análisis de carpeta: organize (por tipo), find_duplicates (MD5), disk_space.",
+    "name": "smart_file_organizer",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "organize (clasificar por tipo) | find_duplicates (buscar duplicados MD5) | disk_space (analizar espacio)",
+          "type": "STRING"
+        },
+        "directory": {
+          "description": "Ruta absoluta del directorio a analizar. Por defecto usa la carpeta Descargas.",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "smart_home": {
+    "description": "Controla bombillos, enchufes y dispositivos Tuya/Smart Life (red local) y luces Philips Hue. USAR: 'encendé/apagá la luz', 'poné el bombillo en rojo', 'bajá la luz al 30%', 'qué dispositivos tengo', 'configurá los dispositivos', 'vinculá Hue'. Acciones: setup (Tuya, una vez), scan, list, on, off, toggle, brightness, color, white, status, functions (capacidades de un dispositivo Tuya), set_value (setear un DP crudo: para ventiladores/termostatos/etc.), hue_pair (vincular el Bridge Philips Hue).",
+    "name": "smart_home",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "setup | scan | list | on | off | toggle | brightness | color | white | status | functions | set_value | hue_pair",
+          "type": "STRING"
+        },
+        "color": {
+          "description": "color: hex '#ff0000' o nombre (rojo, azul, verde, blanco...)",
+          "type": "STRING"
+        },
+        "device": {
+          "description": "Nombre o id del dispositivo (Tuya o Hue). Si hay uno solo, se asume.",
+          "type": "STRING"
+        },
+        "dp": {
+          "description": "set_value: código/índice del DP a setear (ver con action=functions)",
+          "type": "STRING"
+        },
+        "level": {
+          "description": "brightness/white: 0-100",
+          "type": "INTEGER"
+        },
+        "temp": {
+          "description": "white: temperatura — cálido | neutral | frío | hospital, o 0(cálido)-100(frío).",
+          "type": "STRING"
+        },
+        "value": {
+          "description": "set_value: valor a escribir (true/false, número o texto)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "spotify_control": {
+    "description": "Control real de Spotify (Web API). 'reproducí/poné a X' (play con query=artista/canción/playlist), pausar, reanudar, siguiente, anterior, volumen, buscar, qué suena, dispositivos. La PRIMERA vez requiere autorizar: action=connect (abre el navegador). Necesita cuenta Premium para reproducir. Si no hay dispositivo activo, hay que abrir Spotify en algún equipo.",
+    "name": "spotify_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "connect | play | pause | resume | next | prev | volume | search | current | devices | transfer",
+          "type": "STRING"
+        },
+        "device": {
+          "description": "play/transfer: nombre del dispositivo donde sonar (ej 'Echo Dot', 'MacBook'). Si se omite usa el activo o el primero.",
+          "type": "STRING"
+        },
+        "level": {
+          "description": "volume: 0-100",
+          "type": "INTEGER"
+        },
+        "query": {
+          "description": "Para play/search: canción, artista o playlist (ej 'Diomedes Díaz')",
+          "type": "STRING"
+        },
+        "value": {
+          "description": "volume: 'up'/'down' si no se da level",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "system_control": {
+    "description": "Controla el sistema y las apps (Mac/Windows/Linux). USAR para: 'qué apps tengo abiertas', 'pasá a Chrome', 'cerrá Spotify', 'matá el proceso X', 'cuánta batería queda', 'cómo está el CPU/RAM', 'no dejes que se duerma', 'qué tengo copiado', 'copiá esto', 'subí el volumen', 'corré el atajo X'. Acciones: apps, switch, quit, force_quit, processes, kill, battery, sysinfo, caffeinate, clipboard_get, clipboard_set, volume, run_shortcut.",
+    "name": "system_control",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "apps | switch | quit | force_quit | processes | kill | battery | sysinfo | caffeinate | clipboard_get | clipboard_set | volume | run_shortcut",
+          "type": "STRING"
+        },
+        "app": {
+          "description": "Nombre de la app (switch/quit/force_quit)",
+          "type": "STRING"
+        },
+        "by": {
+          "description": "processes: 'cpu' (default) o 'ram'",
+          "type": "STRING"
+        },
+        "level": {
+          "description": "volume: 0-100",
+          "type": "INTEGER"
+        },
+        "mode": {
+          "description": "volume: up | down | mute | unmute",
+          "type": "STRING"
+        },
+        "shortcut": {
+          "description": "run_shortcut: nombre del Atajo de macOS",
+          "type": "STRING"
+        },
+        "state": {
+          "description": "caffeinate: on (no dormir) | off",
+          "type": "STRING"
+        },
+        "target": {
+          "description": "kill: nombre de proceso o PID",
+          "type": "STRING"
+        },
+        "text": {
+          "description": "clipboard_set: texto a copiar",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "system_monitor": {
+    "description": "Sistema: cpu, ram, disk, network, gpu, temperature, battery, uptime, processes, kill, report.",
+    "name": "system_monitor",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "cpu | ram | disk | network | gpu | temperature | battery | uptime | processes | kill | report",
+          "type": "STRING"
+        },
+        "count": {
+          "description": "Para processes: cantidad a mostrar (default: 10)",
+          "type": "INTEGER"
+        },
+        "name": {
+          "description": "Para kill: nombre o PID del proceso",
+          "type": "STRING"
+        },
+        "sort_by": {
+          "description": "Para processes: cpu (default) | ram",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "terminal_agent": {
+    "description": "Ejecuta comandos shell (powershell/cmd en Windows, bash/zsh en Mac/Linux). Comodín universal si no hay tool específica.",
+    "name": "terminal_agent",
+    "parameters": {
+      "properties": {
+        "command": {
+          "description": "El comando exacto a ejecutar",
+          "type": "STRING"
+        },
+        "shell": {
+          "description": "Shell a usar: powershell (default) o cmd",
+          "type": "STRING"
+        },
+        "timeout": {
+          "description": "Timeout en segundos (default: 120, max: 600)",
+          "type": "INTEGER"
+        },
+        "working_directory": {
+          "description": "Directorio de trabajo para el comando (opcional)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "command"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "tool_creator": {
+    "description": "Crea tools nuevas en runtime escribiendo código Python. Usa cuando el usuario pida 'aprende a hacer X'.",
+    "name": "tool_creator",
+    "parameters": {
+      "properties": {
+        "description": {
+          "description": "Descripción clara de la herramienta y para qué sirve",
+          "type": "STRING"
+        },
+        "parameters_schema": {
+          "description": "El bloque de 'properties' del JSON schema en formato string válido. Ej: '{\"accion\": {\"type\": \"STRING\"}}'",
+          "type": "STRING"
+        },
+        "python_code": {
+          "description": "Código Python con la función def <tool_name>(parameters: dict, player=None, speak=None) -> str:",
+          "type": "STRING"
+        },
+        "tool_name": {
+          "description": "Nombre de la herramienta en snake_case",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "tool_name",
+        "description",
+        "parameters_schema",
+        "python_code"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "trading_bot": {
+    "description": "Bot de inversión en modo PAPER (simulación con dinero FICTICIO sobre precios REALES de Yahoo Finance — NO hay dinero real ni ganancias garantizadas). Acciones/ETFs estilo S&P 500 (default SPY) y empresas (AAPL, MSFT...). Dos estrategias: 'dca' (compra monto fijo cada período) o 'smart' (ANALIZA el mercado con medias móviles + RSI y decide solo comprar/tomar ganancia/esperar). USAR cuando el usuario hable de 'bot de trading', 'invertir', 'que opere solo/automático', 'analiza el mercado', 'comprá acciones', 'cómo va mi portafolio', 'cuánto gané', 'abrí el panel/dashboard de trading', 'pasá a dinero real'. IMPORTANTE: si pide 'ganancias seguras/garantizadas', aclarar con honestidad que NINGÚN bot las garantiza; esto es práctica sin riesgo en simulación. action=setup (crea portafolio; pasá strategy=smart para automático inteligente) | status | panel (VENTANA gráfica con posiciones, curva y movimientos por fecha) | analyze (señal de mercado SIN operar) | price | invest (compra manual) | sell | tick (fuerza una corrida automática) | history | performance (reporte de ganancia realizada: period=week/month/all) | watchlist (qué tickers vigila el smart) | config (ticker/monto/frecuencia/estrategia/efectivo/stop_loss_pct/watch_add/watch_remove) | auto (automático on/off) | mode (cambia entre SIMULACIÓN local y DINERO REAL vía broker Alpaca) | reset. El modo smart vigila el ticker principal + la watchlist ('vigilá también Apple'→config watch_add=AAPL) y tiene STOP-LOSS automático (vende todo si una posición cae stop_loss_pct% bajo su promedio; default 8%, 0=off). SOBRE DINERO REAL: por defecto todo es simulación; cambiar a real requiere cuenta y claves de Alpaca, y activar dinero real de verdad (live) exige confirmación EXPLÍCITA del usuario. Si el usuario pide pasar a real, usá action=mode mode=real (eso conecta a Alpaca paper primero); solo pasá live=true + confirm=true cuando el usuario confirme claramente que quiere mover plata real.",
+    "name": "trading_bot",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "setup | status | panel | analyze | price | invest | sell | tick | history | config | auto | mode | reset",
+          "type": "STRING"
+        },
+        "add_cash": {
+          "description": "config: agrega efectivo ficticio al portafolio.",
+          "type": "NUMBER"
+        },
+        "amount": {
+          "description": "Monto en USD a invertir/vender. 'all' para vender todo. Default: el monto por operación.",
+          "type": "NUMBER"
+        },
+        "cash": {
+          "description": "setup: capital inicial ficticio (default 10000).",
+          "type": "NUMBER"
+        },
+        "confirm": {
+          "description": "action=mode con live=true: confirmación EXPLÍCITA del usuario para mover dinero real. No lo pongas en true salvo que el usuario lo confirme sin ambigüedad.",
+          "type": "BOOLEAN"
+        },
+        "dca_amount": {
+          "description": "setup/config: monto fijo por operación (USD).",
+          "type": "NUMBER"
+        },
+        "frequency": {
+          "description": "daily | weekly (frecuencia del automático). Default weekly.",
+          "type": "STRING"
+        },
+        "live": {
+          "description": "action=mode: true = Alpaca LIVE (DINERO REAL); false/omitido = Alpaca paper (ficticio). true requiere confirm=true.",
+          "type": "BOOLEAN"
+        },
+        "mode": {
+          "description": "action=mode: 'paper' (simulación local) o 'real' (broker Alpaca). Sin valor = informa el modo actual.",
+          "type": "STRING"
+        },
+        "period": {
+          "description": "performance: week | month | all (default all).",
+          "type": "STRING"
+        },
+        "state": {
+          "description": "auto: on | off.",
+          "type": "STRING"
+        },
+        "stop_loss_pct": {
+          "description": "config: % de caída bajo el promedio que dispara la venta total de una posición (default 8; 0 = desactivar).",
+          "type": "NUMBER"
+        },
+        "strategy": {
+          "description": "setup/config: 'dca' (compra ciega monto fijo) o 'smart' (analiza el mercado y decide solo). Para 'que opere solo según el mercado' usá smart.",
+          "type": "STRING"
+        },
+        "ticker": {
+          "description": "Símbolo bursátil (ej SPY, AAPL, MSFT, QQQ). Default: el configurado (SPY).",
+          "type": "STRING"
+        },
+        "watch_add": {
+          "description": "config: ticker a AGREGAR a la watchlist del modo smart (ej AAPL).",
+          "type": "STRING"
+        },
+        "watch_remove": {
+          "description": "config: ticker a QUITAR de la watchlist.",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "unified_communications": {
+    "description": "Mensajes a whatsapp/telegram/discord/gmail por una sola interfaz.",
+    "name": "unified_communications",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "send_message (enviar mensaje)",
+          "type": "STRING"
+        },
+        "message": {
+          "description": "Contenido del mensaje a enviar",
+          "type": "STRING"
+        },
+        "platform": {
+          "description": "Plataforma de comunicación: whatsapp | telegram | discord | gmail",
+          "type": "STRING"
+        },
+        "recipient": {
+          "description": "Destinatario: número telefónico para WhatsApp, ID de chat o token para Telegram, Webhook URL para Discord, o email para Gmail",
+          "type": "STRING"
+        },
+        "subject": {
+          "description": "Asunto del correo (solo aplica para Gmail)",
+          "type": "STRING"
+        },
+        "token": {
+          "description": "Token de Bot opcional para Telegram",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "platform",
+        "action",
+        "recipient",
+        "message"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "user_profile": {
+    "description": "Perfil del usuario: view, set_preference, set_name, add_note, notes, habits, reset.",
+    "name": "user_profile",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "view | set_preference | set_name | add_note | notes | habits | reset",
+          "type": "STRING"
+        },
+        "key": {
+          "description": "Clave de preferencia (ej: idioma, tema, ciudad)",
+          "type": "STRING"
+        },
+        "name": {
+          "description": "Nombre del usuario",
+          "type": "STRING"
+        },
+        "note": {
+          "description": "Nota personal a guardar",
+          "type": "STRING"
+        },
+        "value": {
+          "description": "Valor de la preferencia",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "visual_click": {
+    "description": "Clic físico en un elemento ubicado por visión (descripción natural).",
+    "name": "visual_click",
+    "parameters": {
+      "properties": {
+        "element_description": {
+          "description": "Descripción clara de lo que quieres cliquear (ej: 'botón de enviar', 'ícono de la papelera').",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "element_description"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "weather_report": {
+    "description": "Clima actual + pronóstico de hoy y mañana por ciudad (temperatura, sensación térmica, humedad, viento, probabilidad de lluvia).",
+    "name": "weather_report",
+    "parameters": {
+      "properties": {
+        "city": {
+          "description": "Ciudad (ej: Bogotá, Madrid)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "city"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "web_search": {
+    "description": "Búsqueda web (DuckDuckGo). mode=compare para comparar items por aspect (price/specs/reviews).",
+    "name": "web_search",
+    "parameters": {
+      "properties": {
+        "aspect": {
+          "description": "price | specs | reviews",
+          "type": "STRING"
+        },
+        "items": {
+          "description": "Items to compare",
+          "items": {
+            "type": "STRING"
+          },
+          "type": "ARRAY"
+        },
+        "mode": {
+          "description": "search (default) or compare",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Search query",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "whatsapp": {
+    "description": "WhatsApp: enviar texto/imagen, buscar contactos por nombre, leer, agregar/listar contactos. Resuelve el nombre del destinatario contra los contactos sincronizados de WhatsApp (no hace falta tenerlo guardado en JARVIS). Si hay varios parecidos, la tool los lista para que elijas; si no encuentra, pedir el número con código de país.",
+    "name": "whatsapp",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "send | send_image | search | read | unread | add_contact | list_contacts | delete_contact",
+          "type": "STRING"
+        },
+        "caption": {
+          "description": "Descripción de la imagen (opcional)",
+          "type": "STRING"
+        },
+        "count": {
+          "description": "Cantidad de mensajes a leer (default: 10)",
+          "type": "INTEGER"
+        },
+        "image_path": {
+          "description": "Ruta de la imagen para send_image",
+          "type": "STRING"
+        },
+        "message": {
+          "description": "Texto del mensaje a enviar",
+          "type": "STRING"
+        },
+        "name": {
+          "description": "Nombre del contacto para add_contact/delete_contact",
+          "type": "STRING"
+        },
+        "phone": {
+          "description": "Número de teléfono con código de país (ej: 5491155551234) para add_contact",
+          "type": "STRING"
+        },
+        "receiver": {
+          "description": "Nombre del contacto (se busca en tus contactos de WhatsApp) o número con código de país (ej: 573001234567)",
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "OBJECT"
+    }
+  },
+  "whatsapp_connect": {
+    "description": "Conecta WhatsApp: abre una terminal con el QR para escanear y activa las tools de WhatsApp en vivo. USAR cuando el usuario dice 'conectá WhatsApp', 'vinculá WhatsApp', 'activá WhatsApp'. action=connect (default) abre el QR; status verifica si está conectado; stop apaga el bridge. Tras escanear el QR, el usuario dice 'recargar whatsapp' (mandar action=connect de nuevo) para activar las herramientas.",
+    "name": "whatsapp_connect",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "connect (default) | status | stop",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  },
+  "youtube_video": {
+    "description": "YouTube: reproduce DIRECTO el primer video de la búsqueda (play, default). También search_page para abrir los resultados.",
+    "name": "youtube_video",
+    "parameters": {
+      "properties": {
+        "action": {
+          "description": "play (default, reproduce el primer video) | search_page (abre los resultados)",
+          "type": "STRING"
+        },
+        "query": {
+          "description": "Qué buscar/reproducir",
+          "type": "STRING"
+        },
+        "url": {
+          "description": "URL directa de un video (opcional, la abre tal cual)",
+          "type": "STRING"
+        }
+      },
+      "required": [],
+      "type": "OBJECT"
+    }
+  }
+}

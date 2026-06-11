@@ -1,0 +1,4 @@
+# Dependencias SOLO de desarrollo/tests (no hacen falta para correr JARVIS).
+#   pip install -r requirements-dev.txt
+#   pytest
+pytest>=8.0

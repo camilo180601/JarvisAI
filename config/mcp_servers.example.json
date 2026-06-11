@@ -1,0 +1,174 @@
+{
+    "enabled": true,
+    "_comment": "Servers MCP de JARVIS. command 'npx'/'uv' se resuelven solos aunque la app se lance por GUI. Para activar: poner disabled:false (y completar env si pide token).",
+    "servers": {
+        "memory": {
+            "_doc": "Knowledge graph persistente. 9 tools, ~900 tokens. ACTIVO.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-memory"
+            ],
+            "env": {
+                "MEMORY_FILE_PATH": "<HOME>/.jarvis/memory_graph.json"
+            }
+        },
+        "thinking": {
+            "_doc": "Sequential thinking — razonamiento paso a paso. 1 tool. ACTIVO.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking"
+            ]
+        },
+        "playwright": {
+            "_doc": "Browser automation real. 23 tools (~4000 tokens). Sin credenciales — solo flip disabled:false.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@playwright/mcp@latest"
+            ],
+            "disabled": true
+        },
+        "filesystem": {
+            "_doc": "File ops ricas. Se solapa con file_controller. Flip disabled:false para activar.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "<HOME>/Documents"
+            ],
+            "disabled": true
+        },
+        "github": {
+            "_doc": "PRs, issues, repos. TOKEN: github.com/settings/tokens (classic, scope repo). Pegar en env y flip disabled:false.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-github"
+            ],
+            "env": {},
+            "disabled": false,
+            "_env_doc": "Secretos por .env (heredados del entorno): GITHUB_PERSONAL_ACCESS_TOKEN"
+        },
+        "brave-search": {
+            "_doc": "Búsqueda web premium. TOKEN free: brave.com/search/api. Mejor que el web_search de DuckDuckGo.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-brave-search"
+            ],
+            "env": {},
+            "disabled": true,
+            "_env_doc": "Secretos por .env (heredados del entorno): BRAVE_API_KEY"
+        },
+        "spotify": {
+            "_doc": "Control Spotify completo (search/playlists/playback). REQUIERE Spotify Premium + OAuth. Sin Premium no controla reproduccion — usar spotify_control nativo (teclas multimedia) en su lugar. Paquete: spotify-mcp.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "spotify-mcp"
+            ],
+            "env": {},
+            "disabled": true,
+            "_env_doc": "Secretos por .env (heredados del entorno): SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET"
+        },
+        "telegram": {
+            "_doc": "Telegram Bot API (bot token de @BotFather). Paquete telegram-bot-mcp. Mensajeria via tu bot, no tu cuenta personal.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "telegram-bot-mcp"
+            ],
+            "env": {},
+            "disabled": false,
+            "_env_doc": "Secretos por .env (heredados del entorno): TELEGRAM_BOT_API_TOKEN"
+        },
+        "whatsapp": {
+            "_doc": "WhatsApp personal. Pre-requisito: brew install go uv, clonar lharries/whatsapp-mcp, correr bridge + escanear QR (ver MCP_SETUP.md). Después flip disabled:false.",
+            "command": "uv",
+            "args": [
+                "--directory",
+                "<RUTA_DEL_PROYECTO>/integrations/whatsapp-mcp/whatsapp-mcp-server",
+                "run",
+                "main.py"
+            ],
+            "disabled": false
+        },
+        "notion": {
+            "_doc": "Notas y bases de datos Notion. Integration: notion.so/my-integrations → Internal token.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@notionhq/notion-mcp-server"
+            ],
+            "env": {},
+            "disabled": true,
+            "_env_doc": "Secretos por .env (heredados del entorno): NOTION_TOKEN"
+        },
+        "composio": {
+            "_doc": "Mega-server: 250+ apps (Gmail, Slack, Linear, HubSpot...). API key: app.composio.dev.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "composio-core",
+                "mcp"
+            ],
+            "env": {},
+            "disabled": true,
+            "_env_doc": "Secretos por .env (heredados del entorno): COMPOSIO_API_KEY"
+        },
+        "figma": {
+            "_doc": "Figma (community figma-developer-mcp): lee diseños/frames/estilos con tu FIGMA_TOKEN del .env (main.py lo mapea a FIGMA_API_KEY). Funciona sin la app de escritorio.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "figma-developer-mcp",
+                "--stdio",
+                "--image-dir",
+                "<HOME>/Pictures/JARVIS/figma"
+            ],
+            "disabled": false
+        },
+        "figma-devmode": {
+            "_doc": "Figma Dev Mode MCP OFICIAL (get_design_context, get_screenshot...). Requiere: app Figma Desktop abierta + Preferencias → 'Enable Dev Mode MCP Server' (asiento Dev/Full en plan pago). Cuando lo actives, flip disabled:false y decí 'recargar mcp'.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "http://127.0.0.1:3845/mcp"
+            ],
+            "disabled": true
+        },
+        "windows-mcp": {
+            "_doc": "Control avanzado de Windows (CursorTouch/Windows-MCP, 15 tools vía UIAutomation: Click/Type/Snapshot del árbol de UI, App, PowerShell, Registry, Clipboard...). Solo corre en Windows (platform=win32; en Mac/Linux se omite solo). Requiere: Python 3.13+ y uv instalados (pipx install uv; uvx windows-mcp).",
+            "command": "uvx",
+            "args": [
+                "windows-mcp",
+                "serve"
+            ],
+            "platform": "win32",
+            "disabled": false
+        },
+        "vercel": {
+            "_doc": "Vercel MCP OFICIAL (remoto, https://mcp.vercel.com) vía puente mcp-remote: docs, proyectos, deployments, logs. OAuth: la PRIMERA vez abre el navegador para loguearte en Vercel; el token queda cacheado en ~/.mcp-auth.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "https://mcp.vercel.com"
+            ],
+            "disabled": false
+        },
+        "chrome-devtools": {
+            "_doc": "Control profundo de Chrome (oficial de Google, equivalente abierto a 'Claude in Chrome'): navegar, click/fill sobre elementos reales, screenshots, consola, red, performance. Lanza su propia instancia de Chrome (no toca tu sesión). Sin credenciales.",
+            "command": "npx",
+            "args": [
+                "-y",
+                "chrome-devtools-mcp@latest",
+                "--headless=false"
+            ],
+            "disabled": false
+        }
+    }
+}
